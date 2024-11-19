@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   jenkins:
     container_name: jenkins
@@ -11,10 +9,7 @@ services:
       - jenkins_home:/var/jenkins_home
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
-      - USER_CHOCOLATEEN_PASSWORD=${USER_CHOCOLATEEN_PASSWORD:-password}
-      - USER_VAUGIE_G_PASSWORD=${USER_VAUGIE_G_PASSWORD:-password}
-      - USER_I_DONT_KNOW_PASSWORD=${USER_I_DONT_KNOW_PASSWORD:-password}
-      - USER_NASSO_PASSWORD=${USER_NASSO_PASSWORD:-password}
+      - USER_ADMIN_PASSWORD=${USER_ADMIN_PASSWORD:-password}
 
 volumes:
   jenkins_home:
