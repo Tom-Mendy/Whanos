@@ -4,7 +4,7 @@ jenkins:
       allowsSignup: false
       enableCaptcha: false
       users:
-        - id: admin_id
+        - id: admin
           name: Admin
           password: ${USER_ADMIN_PASSWORD}
   systemMessage: Welcome to the Chocolatine-Powered Marvin Jenkins Instance.
@@ -17,7 +17,7 @@ jenkins:
             permissions:
               - "Overall/Administer"
             entries:
-              - user: "admin_id"
+              - user: "admin"
 jobs:
   - file: /var/jenkins_home/job_dsl.groovy
 security:
