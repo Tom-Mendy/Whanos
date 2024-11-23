@@ -1,0 +1,9 @@
+FROM ubuntu:24.04 AS base
+
+RUN apt-get update
+
+RUN apt-get install -y python3.12
+
+RUN rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
