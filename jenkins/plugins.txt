@@ -8,3 +8,5 @@ script-security
 structs
 role-strategy
 ws-cleanup
+workflow-aggregator
+pipeline-build-step

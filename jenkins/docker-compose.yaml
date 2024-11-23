@@ -1,6 +1,7 @@
 services:
   jenkins:
     container_name: jenkins
+    pull_policy: always
     build: .
     ports:
       - "8080:8080"
