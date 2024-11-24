@@ -6,11 +6,11 @@ folder('Projects') {
     description('Folder containing linked project jobs.')
 }
 
-def baseImages = ['whanos-c', 'whanos-java', 'whanos-javascript', 'whanos-python', 'whanos-befunge']
+def baseImages = ['c', 'java', 'javascript', 'python', 'befunge']
 
 baseImages.each { image ->
-    job("Whanos base images/${image}") {
-        description("Build the ${image} base image")
+    job("Whanos base images/whanos-${image}") {
+        description("Build the whanos-${image} base image")
         wrappers {
             preBuildCleanup {
                 includePattern('**/target/**')
@@ -19,7 +19,7 @@ baseImages.each { image ->
             }
         }
         steps {
-            shell("docker build -t ${image} .")
+            shell("docker build -t whanos-${image} -f /var/jenkins_home/docker_images/${image}/Dockerfile.standalone .")
         }
     }
 }

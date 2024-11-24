@@ -4,7 +4,9 @@ WORKDIR /var/jenkins_home
 
 # Install make, gcc and libcriterion-dev for testing
 USER root
-RUN apt-get update && apt-get install build-essential libcriterion-dev -y
+RUN apt-get update && apt-get install build-essential docker.io -y
+RUN usermod -aG docker jenkins
+
 USER jenkins
 
 # Install Jenkins plugins
