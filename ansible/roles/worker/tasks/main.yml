@@ -1,0 +1,59 @@
+- name: Ensure application directory exists
+  ansible.builtin.file:
+    path: /var/www/worker
+    state: directory
+    owner: www-data
+    group: www-data
+
+- name: Extract worker application
+  ansible.builtin.unarchive:
+    src: worker.tar
+    dest: /var/www/worker
+    owner: www-data
+    group: www-data
+
+- name: Install maven
+  apt:
+    name: maven
+    state: present
+
+- name: Check if java.deb exists
+  ansible.builtin.stat:
+    path: /var/www/worker/jdk-21_linux-x64_bin.deb
+  register: java_file
+
+- name: Download Java 21
+  command: wget https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.deb
+  args:
+    chdir: /var/www/worker
+  when: not java_file.stat.exists
+
+- name: Install Java 21
+  command: sudo dpkg -i jdk-21_linux-x64_bin.deb
+  args:
+    chdir: /var/www/worker
+  when: not java_file.stat.exists
+
+- name: Check if worker.jar exists
+  ansible.builtin.stat:
+    path: /var/www/worker/target/worker.jar
+  register: worker_file
+
+- name: Builds the worker.
+  command: mvn install
+  args:
+    chdir: /var/www/worker/
+  when: not worker_file.stat.exists
+
+- name: Upload systemd service file
+  ansible.builtin.template:
+    src: ../files/worker.service
+    dest: /etc/systemd/system/worker.service
+    mode: '0644'
+
+- name: Ensure service is enabled and running
+  ansible.builtin.systemd:
+    name: worker.service
+    state: started
+    daemon_reload: true
+    enabled: true

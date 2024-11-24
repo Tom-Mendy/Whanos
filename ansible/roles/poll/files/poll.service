@@ -1,0 +1,10 @@
+[Unit]
+Description=Poll Flask Application
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/poll
+Environment=REDIS_HOST={{ hostvars['redis'].ansible_host }}
+ExecStart=/bin/bash -c 'source /var/www/poll/venv/bin/activate && flask run --host=0.0.0.0'
+Restart=on-failure

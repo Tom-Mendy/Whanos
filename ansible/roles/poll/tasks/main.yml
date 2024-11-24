@@ -1,0 +1,47 @@
+- name: Ensure application directory exists
+  ansible.builtin.file:
+    path: /var/www/poll
+    state: directory
+    owner: www-data
+    group: www-data
+
+- name: Extract poll application
+  ansible.builtin.unarchive:
+    src: poll.tar
+    dest: /var/www/poll
+    owner: www-data
+    group: www-data
+
+- name: Install Python venv package
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-venv
+    - acl
+
+- name: Create a virtual environment for the app
+  become_user: www-data
+  ansible.builtin.command:
+    cmd: python3 -m venv /var/www/poll/venv
+  args:
+    creates: /var/www/poll/venv
+
+- name: Install Python dependencies
+  become_user: www-data
+  ansible.builtin.pip:
+    requirements: /var/www/poll/requirements.txt
+    virtualenv: /var/www/poll/venv
+
+- name: Upload systemd service file
+  ansible.builtin.template:
+    src: ../files/poll.service
+    dest: /etc/systemd/system/poll.service
+    mode: '0644'
+
+- name: Ensure result service is running
+  ansible.builtin.systemd:
+    name: poll.service
+    state: started
+    daemon_reload: true
+    enabled: true
