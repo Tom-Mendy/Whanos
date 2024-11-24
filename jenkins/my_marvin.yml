@@ -7,7 +7,7 @@ jenkins:
         - id: admin
           name: Admin
           password: ${USER_ADMIN_PASSWORD}
-  systemMessage: Welcome to the Chocolatine-Powered Marvin Jenkins Instance.
+  systemMessage: "Welcome to the Whanos Jenkins instance."
   authorizationStrategy:
     roleBased:
       roles:
