@@ -1,11 +1,17 @@
+- name: Upload Jenkins file
+  ansible.builtin.copy:
+    src: ../../../../jenkins
+    dest: ~/
+    mode: '0644'
+
+- name: Upload images
+  ansible.builtin.copy:
+    src: ../../../../images
+    dest: ~/
+    mode: '0644'
+
 - name: Deploy jenkins
-  community.docker.docker_container:
-    name: jenkins
-    image: jenkins/jenkins:lts
-    state: started
-    restart_policy: always
-    ports:
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - jenkins_home:/var/jenkins_home
+  community.docker.docker_compose_v2:
+    project_src: ~/jenkins/
+    build: always
+    pull: always

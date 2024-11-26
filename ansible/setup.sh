@@ -16,5 +16,4 @@ echo "${NEW_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 #openssh
 echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
-
 systemctl restart ssh
