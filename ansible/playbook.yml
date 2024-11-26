@@ -1,12 +1,9 @@
-- hosts: all
+- hosts: jenkins
   become: true
   roles:
     - base
-
-# - hosts: redis
-#   become: true
-#   roles:
-#     - redis
+    - docker
+    - jenkins
 
 # - hosts: postgresql
 #   become: true
