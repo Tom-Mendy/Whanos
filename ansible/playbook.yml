@@ -4,6 +4,8 @@
     - base
     - docker
     - jenkins
+  vars:
+    REGISTRY_HOST: "{{ hostvars[groups['registry'][0]].get('ansible_host', inventory_hostname) }}"
 
 - hosts: registry
   become: true

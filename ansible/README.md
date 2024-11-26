@@ -19,3 +19,9 @@ setup your server ip address in `inventory`
 ## Collection
 
 [Ansible Docker Collection](https://docs.ansible.com/ansible/latest/collections/community/docker/index.html)
+
+## SSH Connection
+
+```bash
+ssh -i private_key whanos@[IP]
+```

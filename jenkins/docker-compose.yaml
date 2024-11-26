@@ -14,6 +14,8 @@ services:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - USER_ADMIN_PASSWORD=${USER_ADMIN_PASSWORD:-password}
     user: root
+    env_file:
+      - .env
 
 volumes:
   jenkins_home:

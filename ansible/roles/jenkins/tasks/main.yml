@@ -10,6 +10,52 @@
     dest: ~/
     mode: '0644'
 
+# ENV_FILE
+- name: Check if .env file exists
+  ansible.builtin.stat:
+    path: ~/jenkins/.env
+  register: env_file_exist_result
+
+- name: Ensure .env file exists
+  when: not env_file_exist_result.stat.exists
+  ansible.builtin.file:
+    path: ~/jenkins/.env
+    state: touch
+
+- name: Add REGISTRY_HOST variable to .env file
+  when: not env_file_exist_result.stat.exists
+  ansible.builtin.lineinfile:
+    path: ~/jenkins/.env
+    line: "REGISTRY_HOST={{ REGISTRY_HOST }}"
+    create: yes
+
+
+# REGISTRY HOST
+- name: Check if daemon file exists
+  ansible.builtin.stat:
+    path: /etc/docker/daemon.json
+  register: docker_daemon_file_exist_result
+
+- name: Ensure daemon file exists
+  when: not docker_daemon_file_exist_result.stat.exists
+  ansible.builtin.file:
+    path: /etc/docker/daemon.json
+    state: touch
+
+- name: Add REGISTRY_HOST variable to daemon file
+  when: not docker_daemon_file_exist_result.stat.exists
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    line: "{\"insecure-registries\": [\"{{ REGISTRY_HOST }}\"]}"
+    create: yes
+
+- name: Restart Docker
+  when: not docker_daemon_file_exist_result.stat.exists
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+
+# DEPLOY
 - name: Deploy jenkins
   community.docker.docker_compose_v2:
     project_src: ~/jenkins/
