@@ -21,6 +21,8 @@ baseImages.each { image ->
         }
         steps {
             shell("docker build -t whanos-${image} -f /var/jenkins_home/docker_images/${image}/Dockerfile.base .")
+            shell("docker tag whanos-${image}:latest localhost:5000/whanos-${image}:latest")
+            shell("docker push localhost:5000/whanos-${image}:latest")
         }
     }
 }

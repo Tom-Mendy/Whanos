@@ -5,10 +5,12 @@
     - docker
     - jenkins
 
-# - hosts: postgresql
-#   become: true
-#   roles:
-#     - postgresql
+- hosts: registry
+  become: true
+  roles:
+    - base
+    - docker
+    - registry
 
 # - hosts: poll
 #   become: true
