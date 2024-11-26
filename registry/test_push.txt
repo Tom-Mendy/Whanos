@@ -1,0 +1,76 @@
+docker build -t portail-front:latest --build-arg CONTEXT=recette .
+docker tag portail-front:latest localhost:5000/portail-front:latest
+docker push localhost:5000/portail-front:latest
+
+docker build -t portail-back:latest --build-arg CONTEXT=recette .
+docker tag portail-back:latest localhost:5000/portail-back:latest
+docker push localhost:5000/portail-back:latest
+
+docker build -t service-bi:latest --build-arg CONTEXT=recette .
+docker tag service-bi:latest localhost:5000/service-bi:latest
+docker push localhost:5000/service-bi:latest
+
+docker build -t connecteur-yousign:latest .
+docker tag connecteur-yousign:latest localhost:5000/connecteur-yousign:latest
+docker push localhost:5000/connecteur-yousign:latest
+
+docker build -t connecteur-payzen:latest .
+docker tag connecteur-payzen:latest localhost:5000/connecteur-payzen:latest
+docker push localhost:5000/connecteur-payzen:latest
+
+
+exemple use tag "test_db" :
+
+docker build -t portail-back:test_db --build-arg CONTEXT=recette .
+docker tag portail-back:test_db localhost:5000/portail-back:test_db
+docker push localhost:5000/portail-back:test_db
+
+
+
+
+current_date=$(date +%Y-%m-%d-%H-%M-%S)
+docker build -t back-end-portail:test -t back-end-portail:$current_date .
+docker tag back-end-portail:test localhost:5000/back-end-portail:test
+docker tag back-end-portail:$current_date localhost:5000/back-end-portail:$current_date
+docker push localhost:5000/back-end-portail:test
+docker push localhost:5000/back-end-portail:$current_date
+
+----------------
+pipeline . yaml
+trigger:
+- main
+- Recette
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: |
+    IMAGE_NAME="portail-back"
+    DOCKERFILE_PATH="./project-parent/Dockerfile"
+    REGISTRY="localhost:5000"
+    CURRENT_DATE=$(date +%Y%m%d%H%M%S)
+
+    BRANCH_NAME=$(Build.SourceBranchName)
+    COMMIT_HASH=$(Build.SourceVersion)
+
+    case $BRANCH_NAME in
+    "main")
+        CONTEXT="production"
+        ;;
+    "Recette")
+        CONTEXT="recette"
+        ;;
+    *)
+        CONTEXT="production"
+        ;;
+    esac
+
+    docker build -t $REGISTRY/$IMAGE_NAME:$CONTEXT -t $REGISTRY/$IMAGE_NAME:$CONTEXT-$COMMIT_HASH-$CURRENT_DATE $DOCKERFILE_PATH
+    docker push $REGISTRY/$IMAGE_NAME:$CONTEXT
+    docker push $REGISTRY/$IMAGE_NAME:$CONTEXT-$COMMIT_HASH-$CURRENT_DATE
+    if [[ $BRANCH_NAME == "main" ]]; then
+        docker tag $REGISTRY/$IMAGE_NAME:$CONTEXT $REGISTRY/$IMAGE_NAME:latest
+        docker push $REGISTRY/$IMAGE_NAME:latest
+    fi
+  displayName: 'Build and Push Docker Image'

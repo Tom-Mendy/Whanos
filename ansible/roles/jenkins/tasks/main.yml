@@ -1,0 +1,17 @@
+- name: Upload Jenkins file
+  ansible.builtin.copy:
+    src: ../../../../jenkins
+    dest: ~/
+    mode: '0644'
+
+- name: Upload images
+  ansible.builtin.copy:
+    src: ../../../../images
+    dest: ~/
+    mode: '0644'
+
+- name: Deploy jenkins
+  community.docker.docker_compose_v2:
+    project_src: ~/jenkins/
+    build: always
+    pull: always
