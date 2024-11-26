@@ -6,7 +6,8 @@ folder('Projects') {
     description('Folder containing linked project jobs.')
 }
 
-def baseImages = ['c', 'java', 'javascript', 'python', 'befunge']
+// def baseImages = ['c', 'java', 'javascript', 'python', 'befunge']
+def baseImages = ['c', 'java', 'javascript', 'python']
 
 baseImages.each { image ->
     job("Whanos base images/whanos-${image}") {
@@ -19,7 +20,7 @@ baseImages.each { image ->
             }
         }
         steps {
-            shell("docker build -t whanos-${image} -f /var/jenkins_home/docker_images/${image}/Dockerfile.standalone .")
+            shell("docker build -t whanos-${image} -f /var/jenkins_home/docker_images/${image}/Dockerfile.base .")
         }
     }
 }
@@ -38,7 +39,7 @@ pipelineJob('Whanos base images/Build all base images') {
                             build job: 'Whanos base images/whanos-java'
                             build job: 'Whanos base images/whanos-javascript'
                             build job: 'Whanos base images/whanos-python'
-                            build job: 'Whanos base images/whanos-befunge'
+                            // build job: 'Whanos base images/whanos-befunge'
                         }
                     }
                 }
