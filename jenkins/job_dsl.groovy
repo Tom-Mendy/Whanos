@@ -20,10 +20,14 @@ baseImages.each { image ->
             }
         }
         steps {
-            shell("docker build -t whanos-${image} -f /var/jenkins_home/docker_images/${image}/Dockerfile.base --build-arg REPO=${GITHUB_DOCKER_REGISTRY_REPO} .")
-            shell("docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest")
-            shell("echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin")
-            shell("docker push ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest")
+            shell("""
+                cd /var/jenkins_home/docker_images/${image}/
+                docker build -t whanos-${image} - < Dockerfile.base
+            """)
+            // shell("docker build -t whanos-${image} -f Dockerfile.base --build-arg REPO=${GITHUB_DOCKER_REGISTRY_REPO}")
+            // shell("docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest")
+            // shell("echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin")
+            // shell("docker push ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest")
         }
     }
 }
