@@ -55,41 +55,31 @@ job("Whanos base images/Build all base images") {
 }
 
 
-// job("link-project") {
-//     description("Job to links the specified project in the parameters to the Whanos infrastructure by creating a job")
-//     wrappers {
-//         preBuildCleanup {
-//             includePattern('**/target/**')
-//             deleteDirectories()
-//             cleanupParameter('CLEANUP')
-//         }
-//     }
-//     parameters {
-//         stringParam('REPO_URL', '', 'SSH of the repository to link')
-//         stringParam('DISPLAY_NAME', '', 'Display name for the job')
-//     }
-//     steps {
-//         dsl {
-//             scriptText = '''
-// job(Projects/DISPLAY_NAME) {
-//     wrappers {
-//         preBuildCleanup { // Clean before build
-//             includePattern('**/target/**')
-//             deleteDirectories()
-//             cleanupParameter('CLEANUP')
-//         }
-//     }
-//     steps {
-//         git branch: 'main',
-//         credentialsId: 'admin-ssh-key',
-//         url: 'REPO_URL'
-//         shell('echo "Hello World"')
-//     }
-//     triggers {
-//         scm('* * * * *')
-//     }
-// }
-// '''
-//         }
-//     }
-// }
+job("link-project") {
+    description("Job to links the specified project in the parameters to the Whanos infrastructure by creating a job")
+    parameters {
+        stringParam('REPO_URL', '', 'SSH of the repository to link')
+        stringParam('DISPLAY_NAME', '', 'Display name for the job')
+    }
+    steps {
+        dsl {
+            scriptText = '''
+job("Projects/${DISPLAY_NAME}") {
+    wrappers {
+        preBuildCleanup { // Clean before build
+            includePattern('**/target/**')
+            deleteDirectories()
+            cleanupParameter('CLEANUP')
+        }
+    }
+    steps {
+        shell('echo "Hello World"')
+    }
+    triggers {
+        scm('* * * * *')
+    }
+}
+'''
+        }
+    }
+}
