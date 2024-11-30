@@ -21,32 +21,31 @@ baseImages.each { image ->
         }
         steps {
             shell("docker build -t whanos-${image} -f /var/jenkins_home/docker_images/${image}/Dockerfile.base .")
-            shell("docker tag whanos-${image}:latest localhost:5000/whanos-${image}:latest")
-            shell("docker push localhost:5000/whanos-${image}:latest")
+            shell("docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest")
+            shell("echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin")
+            shell("docker push ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest")
         }
     }
 }
 
-
-pipelineJob('Whanos base images/Build all base images') {
-    definition {
-        cps {
-            script("""
-            pipeline {
-                agent any
-                stages {
-                    stage('Trigger All') {
-                        steps {
-                            build job: 'Whanos base images/whanos-c'
-                            build job: 'Whanos base images/whanos-java'
-                            build job: 'Whanos base images/whanos-javascript'
-                            build job: 'Whanos base images/whanos-python'
-                            // build job: 'Whanos base images/whanos-befunge'
-                        }
-                    }
+job("Whanos base images/Build all base images") {
+    description("Triggers all base images build jobs.")
+    wrappers {
+        preBuildCleanup {
+            includePattern('**/target/**')
+            deleteDirectories()
+            cleanupParameter('CLEANUP')
+        }
+    }
+    // Post-build Actions
+    publishers {
+        downstreamParameterized {
+            baseImages.each { image ->
+                trigger("Whanos base images/whanos-${image}") {
+                    condition('SUCCESS')
+                    triggerWithNoParameters()
                 }
             }
-            """)
         }
     }
 }

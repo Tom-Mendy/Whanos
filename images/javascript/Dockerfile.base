@@ -1,5 +1,7 @@
 FROM ubuntu:24.04 AS base
 
+LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+
 RUN apt-get update
 
 RUN apt-get install -y nodejs npm

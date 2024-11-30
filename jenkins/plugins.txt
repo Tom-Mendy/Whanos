@@ -10,3 +10,5 @@ role-strategy
 ws-cleanup
 workflow-aggregator
 pipeline-build-step
+pipeline-utility-steps
+parameterized-trigger
