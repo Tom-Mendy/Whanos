@@ -1,6 +1,8 @@
 FROM ubuntu:24.04 AS base
 
-LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+ARG REPO
+
+LABEL org.opencontainers.image.source=https://github.com/${REPO}
 
 RUN apt-get update
 
