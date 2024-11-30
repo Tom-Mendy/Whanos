@@ -22,12 +22,12 @@ baseImages.each { image ->
         steps {
             shell("""
                 cd /var/jenkins_home/docker_images/${image}/
+                echo "LABEL org.opencontainers.image.source=https://github.com/${GITHUB_DOCKER_REGISTRY_REPO}" >> Dockerfile.base
                 docker build -t whanos-${image} - < Dockerfile.base
+                docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest
+                echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
+                docker push ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest
             """)
-            // shell("docker build -t whanos-${image} -f Dockerfile.base --build-arg REPO=${GITHUB_DOCKER_REGISTRY_REPO}")
-            // shell("docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest")
-            // shell("echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin")
-            // shell("docker push ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest")
         }
     }
 }
@@ -53,7 +53,6 @@ job("Whanos base images/Build all base images") {
         }
     }
 }
-
 
 job("link-project") {
     description("Job to links the specified project in the parameters to the Whanos infrastructure by creating a job")

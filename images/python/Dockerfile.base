@@ -1,13 +1,9 @@
 FROM ubuntu:24.04 AS base
 
-ARG REPO
-
-LABEL org.opencontainers.image.source=https://github.com/${REPO}
-
 RUN apt-get update
 
 RUN apt-get install -y python3.12
 
 RUN rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /appLABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
