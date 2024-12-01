@@ -1,9 +1,14 @@
-FROM ubuntu:24.04 AS base
+FROM debian:stable-slim
 
-RUN apt-get update
+RUN set -eux; \
+    apt-get update && apt-get install -y --no-install-recommends \
+        openjdk-21-jdk \
+        maven
 
-RUN apt-get install -y default-jdk maven
-
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
+LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+
+CMD ["java", "-jar", "app.jar"]
