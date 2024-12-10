@@ -1,9 +1,13 @@
-FROM ubuntu:24.04 AS base
+FROM debian:stable-slim
 
-RUN apt-get update
+RUN set -eux; \
+    apt-get update && apt-get install -y --no-install-recommends \
+        python-is-python3
 
-RUN apt-get install -y python3.12
-
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
+LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+
+CMD ["python3.12", "-m", "app"]

@@ -1,0 +1,17 @@
+FROM debian:stable-slim
+
+RUN set -eux; \
+    apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        make \
+        libc-dev
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY befunge /app/
+
+LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+
+CMD ["make", "build"]

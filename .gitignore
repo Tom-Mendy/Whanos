@@ -3,3 +3,4 @@
 env/
 kubernetes/*.yaml
 kubernetes/*.yml
+**/.env
