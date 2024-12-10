@@ -1,2 +1,5 @@
 **/.vscode
 **/node_modules
+env/
+kubernetes/*.yaml
+kubernetes/*.yml
