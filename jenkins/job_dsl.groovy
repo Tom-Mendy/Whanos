@@ -57,7 +57,7 @@ job("Whanos base images/Build all base images") {
 job("link-project") {
     description("Job to links the specified project in the parameters to the Whanos infrastructure by creating a job")
     parameters {
-        stringParam('REPO_URL', '', 'SSH of the repository to link')
+        stringParam('REPO_URL_SSH', '', 'SSH of the repository to link')
         stringParam('DISPLAY_NAME', '', 'Display name for the job')
     }
     steps {
@@ -69,6 +69,15 @@ job("Projects/${DISPLAY_NAME}") {
             includePattern('**/target/**')
             deleteDirectories()
             cleanupParameter('CLEANUP')
+        }
+    }
+    scm {
+        git {
+            remote {
+                url("${REPO_URL_SSH}")
+                credentials('admin-ssh-key')
+            }
+            branch('main')
         }
     }
     steps {
