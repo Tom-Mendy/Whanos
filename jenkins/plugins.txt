@@ -13,3 +13,6 @@ pipeline-build-step
 pipeline-utility-steps
 parameterized-trigger
 ssh-credentials
+git
+credentials-binding
+scm-api
