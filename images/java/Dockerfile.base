@@ -1,7 +1,10 @@
 FROM debian:stable-slim
 
 RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update
+
+RUN set -eux; \
+    apt-get install -y --no-install-recommends \
         openjdk-21-jdk \
         maven
 
@@ -11,4 +14,17 @@ WORKDIR /app
 
 LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
 
-CMD ["java", "-jar", "app.jar"]
+ONBUILD COPY pom.xml /app
+
+ONBUILD RUN set -eux; \
+            mvn dependency:go-offline
+
+ONBUILD RUN set -eux; \
+            rm -rf pom.xml
+
+ONBUILD COPY . /app
+
+ONBUILD RUN set -eux; \
+            mvn package
+
+ONBUILD CMD ["java", "-jar", "app.jar"]

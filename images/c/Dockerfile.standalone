@@ -1,5 +1,7 @@
 FROM gcc:13.2 AS build
 
+SHELL ["/bin/bash", "-c"]
+
 WORKDIR /app
 
 COPY . /app
@@ -7,6 +9,8 @@ COPY . /app
 RUN make
 
 FROM ubuntu:24.04 AS standalone
+
+SHELL ["/bin/bash", "-c"]
 
 WORKDIR /app
 

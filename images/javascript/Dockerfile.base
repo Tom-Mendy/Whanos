@@ -1,5 +1,7 @@
 FROM debian:stable-slim
 
+SHELL ["/bin/bash", "-c"]
+
 RUN set -eux; \
     apt-get update && apt-get install -y --no-install-recommends \
         nodejs \
@@ -11,4 +13,9 @@ WORKDIR /app
 
 LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
 
-CMD ["node", "."]
+ONBUILD COPY . /app
+
+ONBUILD RUN set -eux; \
+            npm install
+
+ONBUILD CMD ["node", "."]

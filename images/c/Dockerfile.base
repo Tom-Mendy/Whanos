@@ -3,13 +3,21 @@ FROM debian:stable-slim
 SHELL ["/bin/bash", "-c"]
 
 RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update
+
+RUN set -eux; \
+    apt-get install -y --no-install-recommends \
         build-essential \
         gcc \
         make \
         libc-dev \
-        gnupg \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+        gnupg
+
+RUN set -eux; \
+    apt-get clean
+    
+RUN set -eux; \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -23,4 +31,4 @@ ONBUILD RUN set -eux; \
 ONBUILD RUN set -eux; \
             rm -rf *.c *.h Makefile
 
-CMD ["./compiled-app"]
+ONBUILD CMD ["./compiled-app"]
