@@ -1,15 +1,26 @@
 FROM debian:stable-slim
 
+SHELL ["/bin/bash", "-c"]
+
 RUN set -eux; \
     apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
         gcc \
         make \
-        libc-dev
-
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+        libc-dev \
+        gnupg \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
 
-CMD ["make", "build"]
+ONBUILD COPY . /app
+
+ONBUILD RUN set -eux; \
+            make
+
+ONBUILD RUN set -eux; \
+            rm -rf *.c *.h Makefile
+
+CMD ["./compiled-app"]
