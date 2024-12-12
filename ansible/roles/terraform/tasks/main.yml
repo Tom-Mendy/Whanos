@@ -1,0 +1,37 @@
+- name: Initialize Terraform
+  command:
+    cmd: terraform init
+    chdir: ../../terraform
+  register: terraform_init_result
+  changed_when: "'Terraform has been successfully initialized!' in terraform_init_result.stdout"
+
+- name: Plan Terraform Deployment
+  command:
+    cmd: terraform plan
+    chdir: ../../terraform
+  register: terraform_plan_result
+
+- name: Apply Terraform Deployment
+  command:
+    cmd: terraform apply -auto-approve
+    chdir: ../../terraform
+  register: terraform_apply_result
+
+- name: Get Terraform Output
+  command:
+    cmd: terraform output -json
+    chdir: ../../terraform
+  register: terraform_output_result
+
+- name: Create dynamic inventory
+  ansible.builtin.copy:
+    dest: ../../../inventory
+    content: |
+      [jenkins]
+        {{ terraform_output_result.stdout | from_json | json_query('instance_ips[0]') }}
+      [registry]
+        {{ terraform_output_result.stdout | from_json | json_query('instance_ips[1]') }}
+
+- name: Ensure dynamic inventory is good
+  debug:
+    msg: "{{ lookup('file', '../../../inventory') }}"

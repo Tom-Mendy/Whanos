@@ -4,3 +4,4 @@ env/
 kubernetes/*.yaml
 kubernetes/*.yml
 **/.env
+terraform/whanos-app.json

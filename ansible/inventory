@@ -1,3 +1,7 @@
+terraform:
+  hosts:
+    172.232.46.252
+
 jenkins:
   hosts:
     172.232.46.252
