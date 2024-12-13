@@ -1,23 +1,6 @@
-FROM debian:stable-slim
+FROM gcc:13.2
 
 SHELL ["/bin/bash", "-c"]
-
-RUN set -eux; \
-    apt-get update
-
-RUN set -eux; \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        gcc \
-        make \
-        libc-dev \
-        gnupg
-
-RUN set -eux; \
-    apt-get clean
-    
-RUN set -eux; \
-    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
