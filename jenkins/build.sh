@@ -3,6 +3,7 @@
 LANGUAGE=""
 REGISTRY="github.com/${GITHUB_DOCKER_REGISTRY_REPO}"
 JOB_NAME=$1
+IMAGES_DIR="/var/jenkins_home/docker_images"
 
 if [[ $JOB_NAME == "" ]]; then
     echo ""
@@ -45,24 +46,28 @@ if [[ -f app/main.bf ]]; then
     LANGUAGE="befunge"
 fi
 
-if [[ ${LANGUAGE} != "" ]]; then
+echo "language is ${LANGUAGE}"
+
+if [[ ${LANGUAGE} == "" ]]; then
     echo "Invalid project: no language matched."
     exit 1
 fi
 
 # $1: the name of the job
 image_name="whanos-${JOB_NAME}-${LANGUAGE}"
-image_name_remote_repo="${REGISTRY}/whanos/whanos-$1-${LANGUAGE}"
+image_name_remote_repo="ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${JOB_NAME}-${LANGUAGE}"
 
 if [[ -f Dockerfile ]]; then
     docker build . -t "${image_name}"
     docker tag "${image_name}:latest" "${image_name_remote_repo}:latest"
+    echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
     docker push "${image_name_remote_repo}:latest"
 else
     docker build . \
-        -f "/home/jenkins/images/${LANGUAGE[0]}/Dockerfile.standalone" \
+        -f "${IMAGES_DIR}/${LANGUAGE}/Dockerfile.standalone" \
         -t "${image_name}-standalone"
     docker tag "${image_name}-standalone:latest" "${image_name_remote_repo}-standalone:latest"
+    echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
     docker push "${image_name_remote_repo}-standalone:latest"
 fi
 

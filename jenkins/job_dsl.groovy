@@ -21,7 +21,6 @@ baseImages.each { image ->
         steps {
             shell("""
                 cd /var/jenkins_home/docker_images/${image}/
-                echo "LABEL org.opencontainers.image.source=https://github.com/${GITHUB_DOCKER_REGISTRY_REPO}" >> Dockerfile.base
                 docker build -t whanos-${image} - < Dockerfile.base
                 docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest
                 echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
@@ -80,7 +79,7 @@ job("Projects/${DISPLAY_NAME}") {
         }
     }
     steps {
-        shell('echo "Hello World"')
+        shell("/var/jenkins_home/build.sh ${DISPLAY_NAME}")
     }
     triggers {
         scm('* * * * *')
