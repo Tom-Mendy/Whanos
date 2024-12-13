@@ -20,5 +20,8 @@ COPY ./casc.yml /var/jenkins_home/casc.yaml
 # setup job dsl configuration
 COPY job_dsl.groovy /var/jenkins_home/job_dsl.groovy
 
+# build script for whanos image
+COPY build.sh /var/jenkins_home/build.sh
+
 EXPOSE 8080
 EXPOSE 50000

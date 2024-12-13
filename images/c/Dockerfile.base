@@ -1,15 +1,19 @@
-FROM debian:stable-slim
+FROM gcc:13.2
 
-RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends \
-        gcc \
-        make \
-        libc-dev
-
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+SHELL ["/bin/bash", "-c"]
 
 WORKDIR /app
 
-LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+LABEL org.opencontainers.image.title="Whanos C Base Image" \
+      org.opencontainers.image.description="A base image for building and deploying C applications using Makefile." \
+      org.opencontainers.image.version="1.0"
 
-CMD ["make", "build"]
+ONBUILD COPY . /app
+
+ONBUILD RUN set -eux; \
+            make
+
+ONBUILD RUN set -eux; \
+            rm -rf *.c *.h Makefile
+
+ONBUILD CMD ["./compiled-app"]

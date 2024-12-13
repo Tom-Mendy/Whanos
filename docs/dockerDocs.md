@@ -32,8 +32,6 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
-
 CMD ["python3.12", "-m", "app"]
 ```
 
@@ -47,7 +45,6 @@ CMD ["python3.12", "-m", "app"]
 - **`apt-get install`**: Installs required tools and dependencies (e.g., Python in this example).
 - **`apt-get clean` & `rm -rf /var/lib/apt/lists/*`**: Cleans up package manager cache to minimize image size.
 - **`WORKDIR /app`**: Defines the working directory for application files.
-- **`LABEL org.opencontainers.image.source`**: Adds metadata for the image's source repository.
 - **`CMD`**: Specifies the default command when the container starts. It can be overridden during runtime.
 
 ---
@@ -95,7 +92,6 @@ CMD ["node", "."]
 - **`RUN`**: Executes commands during image build, such as installing dependencies or cleaning up.
 - **`WORKDIR`**: Sets the working directory for `RUN`, `CMD`, and other instructions.
 - **`COPY`**: Copies files from the host to the image.
-- **`LABEL`**: Adds metadata to the image, such as the repository source.
 - **`CMD`**: Defines the default command executed when the container runs. It can be overridden with `docker run`.
 
 ---
@@ -104,7 +100,6 @@ CMD ["node", "."]
 
 1. **Minimize Layers**: Combine `RUN` commands to reduce image layers.
 2. **Clean Up**: Remove unnecessary files and caches to keep the image size small.
-3. **Metadata**: Use `LABEL` to provide useful information about the image.
 4. **Use `set -eux`**: Ensures reliability and debugging information during builds.
 
 By understanding the role and components of base and standalone images, you can build efficient and reusable Docker images tailored for the Whanos infrastructure.

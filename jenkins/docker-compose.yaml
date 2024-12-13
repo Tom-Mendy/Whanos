@@ -21,7 +21,6 @@ services:
       - GITHUB_DOCKER_REGISTRY_TOKEN=${GITHUB_DOCKER_REGISTRY_TOKEN:-github_token}
       # SSH_PRIVATE_KEY
       - SSH_PRIVATE_KEY=${SSH_PRIVATE_KEY:-private_key}
-      - SSH_PASSPHRASE=${SSH_PASSPHRASE} # Optional
     user: root
 
 volumes:
