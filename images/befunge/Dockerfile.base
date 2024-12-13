@@ -12,9 +12,12 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY befunge /app/
+LABEL org.opencontainers.image.source="https://github.com/Tom-Mendy/Whanos" \
+      org.opencontainers.image.title="Whanos befunge Base Image" \
+      org.opencontainers.image.description="A base image for building and deploying befunge applications using c transpilator." \
+      org.opencontainers.image.version="1.0"
 
-LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+COPY befunge /app/
 
 ONBUILD COPY . /app
 

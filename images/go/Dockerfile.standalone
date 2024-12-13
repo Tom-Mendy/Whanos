@@ -1,0 +1,20 @@
+FROM golang:1.21 AS build
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+COPY . /app
+
+RUN set -eux; \
+    go build -o compiled-app
+
+FROM ubuntu:24.04 AS standalone
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+COPY --from=build /app/compiled-app /app/compiled-app
+
+CMD ["/app/compiled-app"]
