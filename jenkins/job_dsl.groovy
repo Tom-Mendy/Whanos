@@ -6,7 +6,7 @@ folder('Projects') {
     description('Folder containing linked project jobs.')
 }
 
-def baseImages = ['c', 'java', 'javascript', 'python', 'befunge']
+def baseImages = ['c', 'java', 'javascript', 'python', 'befunge', 'cpp', 'go']
 
 baseImages.each { image ->
     job("Whanos base images/whanos-${image}") {
@@ -22,9 +22,6 @@ baseImages.each { image ->
             shell("""
                 cd /var/jenkins_home/docker_images/${image}/
                 docker build -t whanos-${image} - < Dockerfile.base
-                docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest
-                echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
-                docker push ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest
             """)
         }
     }
