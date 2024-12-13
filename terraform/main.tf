@@ -9,13 +9,13 @@ terraform {
 
 
 provider "linode" {
-  token = var.linode_api_token
+  token = jsondecode(file("./linode_token.json")).linode_token
 }
 
 resource "linode_instance" "ubuntu_instance" {
-  count     = 1
+  count     = 3
   label     = "ubuntu-instance-${count.index + 1}"
-  region    = "eu-west"
+  region    = "eu-central"
   type      = "g6-nanode-1"
   image     = "linode/ubuntu22.04"
   root_pass = "your-secure-password"
