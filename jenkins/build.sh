@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 LANGUAGE=""
-REGISTRY=github.com/${GITHUB_DOCKER_REGISTRY_REPO}"
+REGISTRY="github.com/${GITHUB_DOCKER_REGISTRY_REPO}"
 JOB_NAME=$1
 
 if [[ $JOB_NAME == "" ]]; then
