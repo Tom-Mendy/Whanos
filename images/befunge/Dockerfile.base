@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM gcc:13.2
 
 SHELL ["/bin/bash", "-c"]
 
@@ -15,8 +15,6 @@ WORKDIR /app
 LABEL org.opencontainers.image.title="Whanos befunge Base Image" \
       org.opencontainers.image.description="A base image for building and deploying befunge applications using c transpilator." \
       org.opencontainers.image.version="1.0"
-
-COPY befunge /app/
 
 ONBUILD COPY . /app
 
