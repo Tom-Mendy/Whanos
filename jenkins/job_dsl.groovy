@@ -6,8 +6,7 @@ folder('Projects') {
     description('Folder containing linked project jobs.')
 }
 
-// def baseImages = ['c', 'java', 'javascript', 'python', 'befunge']
-def baseImages = ['c', 'java', 'javascript', 'python']
+def baseImages = ['c', 'java', 'javascript', 'python', 'befunge']
 
 baseImages.each { image ->
     job("Whanos base images/whanos-${image}") {
@@ -22,7 +21,6 @@ baseImages.each { image ->
         steps {
             shell("""
                 cd /var/jenkins_home/docker_images/${image}/
-                echo "LABEL org.opencontainers.image.source=https://github.com/${GITHUB_DOCKER_REGISTRY_REPO}" >> Dockerfile.base
                 docker build -t whanos-${image} - < Dockerfile.base
                 docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest
                 echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
@@ -57,7 +55,7 @@ job("Whanos base images/Build all base images") {
 job("link-project") {
     description("Job to links the specified project in the parameters to the Whanos infrastructure by creating a job")
     parameters {
-        stringParam('REPO_URL', '', 'SSH of the repository to link')
+        stringParam('REPO_URL_SSH', '', 'SSH of the repository to link')
         stringParam('DISPLAY_NAME', '', 'Display name for the job')
     }
     steps {
@@ -71,8 +69,17 @@ job("Projects/${DISPLAY_NAME}") {
             cleanupParameter('CLEANUP')
         }
     }
+    scm {
+        git {
+            remote {
+                url("${REPO_URL_SSH}")
+                credentials('admin-ssh-key')
+            }
+            branch('main')
+        }
+    }
     steps {
-        shell('echo "Hello World"')
+        shell("/var/jenkins_home/build.sh ${DISPLAY_NAME}")
     }
     triggers {
         scm('* * * * *')
