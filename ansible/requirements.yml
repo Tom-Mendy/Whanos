@@ -1,0 +1,5 @@
+collections:
+- name: community.docker
+  type: galaxy
+- name: containercraft.kubespray
+  type: galaxy
