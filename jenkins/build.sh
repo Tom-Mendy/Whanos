@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 LANGUAGE=""
-REGISTRY="github.com/${GITHUB_DOCKER_REGISTRY_REPO}"
+REGISTRY="ghcr.io/${GITHUB_DOCKER_REGISTRY}"
 JOB_NAME=$1
 IMAGES_DIR="/var/jenkins_home/docker_images"
 
@@ -45,6 +45,19 @@ if [[ -f app/main.bf ]]; then
     fi
     LANGUAGE="befunge"
 fi
+# BONUS LANGUAGES
+if [[ -f app/go.mod ]]; then
+    if [[ ${LANGUAGE} != "" ]]; then
+        LanguageNotSupported
+    fi
+    LANGUAGE="go"
+fi
+if [[ -f CMakeLists.txt ]]; then
+    if [[ ${LANGUAGE} != "" ]]; then
+        LanguageNotSupported
+    fi
+    LANGUAGE="cpp"
+fi
 
 echo "language is ${LANGUAGE}"
 
@@ -55,7 +68,7 @@ fi
 
 # $1: the name of the job
 image_name="whanos-${JOB_NAME}-${LANGUAGE}"
-image_name_remote_repo="ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${JOB_NAME}-${LANGUAGE}"
+image_name_remote_repo="${REGISTRY}/whanos-${JOB_NAME}-${LANGUAGE}"
 
 if [[ -f Dockerfile ]]; then
     docker build . -t "${image_name}"
