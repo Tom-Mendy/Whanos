@@ -23,10 +23,10 @@ ONBUILD RUN set -eux; \
             mvn package
 
 
-FROM openjdk:21-jdk AS standalone
+FROM openjdk:21-jdk AS run
 
 WORKDIR /app
 
-COPY --from=build /app/target/app.jar app.jar
+ONBUILD COPY --from=build /app/target/app.jar app.jar
 
 ONBUILD CMD ["java", "-jar", "app.jar"]
