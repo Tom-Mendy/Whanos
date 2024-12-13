@@ -1,13 +1,19 @@
-FROM debian:stable-slim
+FROM python:3.12
 
-RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends \
-        python-is-python3
-
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+SHELL ["/bin/bash", "-c"]
 
 WORKDIR /app
 
 LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
 
-CMD ["python3.12", "-m", "app"]
+ONBUILD COPY requirements.txt /app
+
+ONBUILD RUN set -eux; \
+            pip install -r requirements.txt
+
+ONBUILD RUN set -eux; \
+            rm -rf requirements.txt
+
+ONBUILD COPY . /app
+
+ONBUILD CMD ["python", "-m", "app"]

@@ -1,5 +1,7 @@
 FROM debian:stable-slim
 
+SHELL ["/bin/bash", "-c"]
+
 RUN set -eux; \
     apt-get update && apt-get install -y --no-install-recommends \
         gcc \
@@ -14,4 +16,12 @@ COPY befunge /app/
 
 LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
 
-CMD ["make", "build"]
+ONBUILD COPY . /app
+
+ONBUILD RUN set -eux; \
+            ./compile.sh main.bf executable
+
+ONBUILD RUN set -eux; \
+            rm -rf *.bf compile.sh
+
+ONBUILD CMD ["./executable"]

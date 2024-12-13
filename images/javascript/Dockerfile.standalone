@@ -1,5 +1,7 @@
 FROM node:20.9 AS dependencies
 
+SHELL ["/bin/bash", "-c"]
+
 WORKDIR /app
 
 COPY package.json /app
@@ -9,6 +11,8 @@ RUN npm install
 COPY . /app
 
 FROM dependencies AS standalone
+
+SHELL ["/bin/bash", "-c"]
 
 WORKDIR /app
 
