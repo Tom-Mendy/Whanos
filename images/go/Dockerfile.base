@@ -1,0 +1,14 @@
+FROM golang:1.21
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+
+ONBUILD COPY . /app
+
+ONBUILD RUN set -eux; \
+    go build -o compiled-app
+
+ONBUILD CMD ["/app/compiled-app"]

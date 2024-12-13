@@ -1,0 +1,17 @@
+FROM gcc:13.2
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+
+ONBUILD COPY . /app
+
+ONBUILD RUN set -eux; \
+    make
+
+ONBUILD RUN set -eux; \
+    rm -rf *.cpp *.hpp *.c *.h Makefile
+
+ONBUILD CMD ["./compiled-app"]

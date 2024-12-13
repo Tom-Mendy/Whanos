@@ -1,0 +1,20 @@
+FROM gcc:13.2 AS build
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+COPY . /app
+
+RUN set -eux; \
+    make
+
+FROM ubuntu:24.04 AS standalone
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+COPY --from=build /app/compiled-app /app/compiled-app
+
+CMD ["/app/compiled-app"]
