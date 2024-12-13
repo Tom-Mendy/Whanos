@@ -10,11 +10,9 @@ WORKDIR /app
 
 COPY . /app
 
-RUN set -eux; \
-    cmake -S . -B build
+RUN cmake -S . -B build
 
-RUN set -eux; \
-    cmake --build build
+RUN cmake --build build
 
 
 FROM ubuntu:24.04 AS standalone
