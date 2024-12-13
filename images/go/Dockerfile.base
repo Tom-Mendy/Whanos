@@ -1,0 +1,31 @@
+FROM golang:1.23 AS dependencies
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+LABEL org.opencontainers.image.source="https://github.com/Tom-Mendy/Whanos"
+
+ONBUILD COPY . /app
+
+ONBUILD RUN cd /app && go mod download
+
+
+FROM dependencies AS build
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+ONBUILD RUN cd /app && go build -o compiled-app
+
+
+FROM golang:1.23 AS base
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+ONBUILD COPY --from=build /app/compiled-app /app/compiled-app
+
+ONBUILD CMD ["/app/compiled-app"]
