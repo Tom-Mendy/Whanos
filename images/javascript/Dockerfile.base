@@ -4,8 +4,7 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /app
 
-LABEL org.opencontainers.image.source="https://github.com/Tom-Mendy/Whanos" \
-      org.opencontainers.image.title="Whanos javascript Base Image" \
+LABEL org.opencontainers.image.title="Whanos javascript Base Image" \
       org.opencontainers.image.description="A base image for building and deploying javascript applications using node." \
       org.opencontainers.image.version="1.0"
 

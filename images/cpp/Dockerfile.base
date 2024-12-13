@@ -10,8 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-LABEL org.opencontainers.image.source="https://github.com/Tom-Mendy/Whanos" \
-      org.opencontainers.image.title="Whanos C++ Base Image" \
+LABEL org.opencontainers.image.title="Whanos C++ Base Image" \
       org.opencontainers.image.description="A base image for building and deploying C++ applications using CMake." \
       org.opencontainers.image.version="1.0"
 
