@@ -20,6 +20,12 @@ baseImages.each { image ->
         }
         steps {
             shell("""
+echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄▖\n\
+▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌ ▐▌▐▌   \n\
+▐▌ ▐▌▐▛▀▜▌▐▛▀▜▌▐▌ ▝▜▌▐▌ ▐▌ ▝▀▚▖\n\
+▐▙█▟▌▐▌ ▐▌▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘"
+            """)
+            shell("""
                 cd /var/jenkins_home/docker_images/${image}/
                 docker build -t whanos-${image} - < Dockerfile.base
             """)
@@ -56,6 +62,12 @@ job("link-project") {
         stringParam('DISPLAY_NAME', '', 'Display name for the job')
     }
     steps {
+        shell("""
+echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄▖\n\
+▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌ ▐▌▐▌   \n\
+▐▌ ▐▌▐▛▀▜▌▐▛▀▜▌▐▌ ▝▜▌▐▌ ▐▌ ▝▀▚▖\n\
+▐▙█▟▌▐▌ ▐▌▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘"
+            """)
         dsl {
             scriptText = '''
 job("Projects/${DISPLAY_NAME}") {
@@ -76,6 +88,12 @@ job("Projects/${DISPLAY_NAME}") {
         }
     }
     steps {
+        shell("""
+echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄▖\n\
+▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌ ▐▌▐▌   \n\
+▐▌ ▐▌▐▛▀▜▌▐▛▀▜▌▐▌ ▝▜▌▐▌ ▐▌ ▝▀▚▖\n\
+▐▙█▟▌▐▌ ▐▌▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘"
+            """)
         shell("/var/jenkins_home/build.sh ${DISPLAY_NAME}")
     }
     triggers {
