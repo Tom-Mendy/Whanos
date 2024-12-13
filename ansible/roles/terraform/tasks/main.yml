@@ -1,26 +1,26 @@
 - name: Initialize Terraform
   command:
     cmd: terraform init
-    chdir: ../../terraform
+    chdir: ../terraform
   register: terraform_init_result
   changed_when: "'Terraform has been successfully initialized!' in terraform_init_result.stdout"
 
 - name: Plan Terraform Deployment
   command:
     cmd: terraform plan
-    chdir: ../../terraform
+    chdir: ../terraform
   register: terraform_plan_result
 
 - name: Apply Terraform Deployment
   command:
     cmd: terraform apply -auto-approve
-    chdir: ../../terraform
+    chdir: ../terraform
   register: terraform_apply_result
 
 - name: Get Terraform Output
   command:
     cmd: terraform output -json
-    chdir: ../../terraform
+    chdir: ../terraform
   register: terraform_output_result
 
 - name: Create dynamic inventory

@@ -1,11 +1,11 @@
-terraform:
-  hosts:
-    172.232.46.252
+# terraform:
+#   hosts:
+#     192.168.249.20
 
 jenkins:
   hosts:
-    172.232.46.252
+    192.168.249.20
 
 registry:
   hosts:
-    172.232.46.252
+    192.168.249.20
