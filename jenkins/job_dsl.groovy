@@ -6,7 +6,7 @@ folder('Projects') {
     description('Folder containing linked project jobs.')
 }
 
-def baseImages = ['c', 'java', 'javascript', 'python', 'befunge', 'cpp', 'go']
+def baseImages = ['c', 'java', 'javascript', 'python', 'befunge', 'cpp', 'go', 'rust']
 
 baseImages.each { image ->
     job("Whanos base images/whanos-${image}") {
