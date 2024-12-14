@@ -1,0 +1,11 @@
+# terraform:
+#   hosts:
+#     192.168.249.20
+
+jenkins:
+  hosts:
+    192.168.249.20
+
+registry:
+  hosts:
+    192.168.249.20

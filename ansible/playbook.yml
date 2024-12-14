@@ -1,3 +1,8 @@
+- hosts: localhost
+  become: false
+  roles:
+    - terraform
+
 - hosts: jenkins
   become: true
   roles:
@@ -11,18 +16,3 @@
     - base
     - docker
     - registry
-
-# - hosts: poll
-#   become: true
-#   roles:
-#     - poll
-
-# - hosts: worker
-#   become: true
-#   roles:
-#     - worker
-
-# - hosts: result
-#   become: true
-#   roles:
-#     - result

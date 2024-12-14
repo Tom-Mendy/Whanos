@@ -1,0 +1,15 @@
+FROM rust:latest
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+LABEL org.opencontainers.image.title="Whanos rust Base Image" \
+      org.opencontainers.image.description="A base image for building and deploying rust applications." \
+      org.opencontainers.image.version="1.0"
+
+ONBUILD COPY . /app/
+
+ONBUILD RUN cargo build --release
+
+ONBUILD CMD ["./target/release/compiled-app"]

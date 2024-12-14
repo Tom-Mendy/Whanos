@@ -4,3 +4,9 @@ env/
 kubernetes/*.yaml
 kubernetes/*.yml
 **/.env
+terraform/whanos-app.json
+terraform/linode_token.json
+terraform/*.tfstate**
+terraform/*.lock**
+terraform/*.**
+ansible/*.tfstate
