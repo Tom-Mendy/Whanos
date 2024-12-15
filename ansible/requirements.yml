@@ -1,0 +1,7 @@
+collections:
+- name: community.docker
+  type: galaxy
+# github repository for playbook
+- name: https://github.com/kubernetes-sigs/kubespray
+  type: git
+  version: master # use the appropriate tag or branch for the version you need

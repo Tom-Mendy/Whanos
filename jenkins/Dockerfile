@@ -2,10 +2,17 @@ FROM jenkins/jenkins:lts
 
 WORKDIR /var/jenkins_home
 
-# Install make, gcc and libcriterion-dev for testing
 USER root
+
+# Install make, gcc and libcriterion-dev for testing
 RUN apt-get update && apt-get install build-essential docker.io -y
 RUN usermod -aG docker jenkins
+
+# install kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+RUN apt-get install -y python3-yaml
 
 USER jenkins
 
@@ -19,6 +26,9 @@ COPY ./casc.yml /var/jenkins_home/casc.yaml
 
 # setup job dsl configuration
 COPY job_dsl.groovy /var/jenkins_home/job_dsl.groovy
+
+# build script for whanos image
+COPY build.sh /var/jenkins_home/build.sh
 
 EXPOSE 8080
 EXPOSE 50000

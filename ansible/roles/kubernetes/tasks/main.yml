@@ -1,0 +1,70 @@
+- name: Install the Kubernetes Python package
+  ansible.builtin.pip:
+    name: kubernetes
+    state: present
+
+- name: Create ServiceAccount for Jenkins
+  kubernetes.core.k8s:
+    state: present
+    kind: ServiceAccount
+    namespace: default
+    name: jenkins
+
+- name: Create ClusterRoleBinding for Jenkins
+  kubernetes.core.k8s:
+    state: present
+    kind: ClusterRoleBinding
+    name: jenkins-integration
+    namespace: default
+    api_version: rbac.authorization.k8s.io/v1
+    definition:
+      metadata:
+        name: jenkins-integration
+        labels:
+          k8s-app: jenkins-image-builder
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+        - kind: ServiceAccount
+          name: jenkins
+          namespace: default
+
+- name: Create a Kubernetes Secret for the Jenkins service account
+  kubernetes.core.k8s:
+    state: present
+    namespace: default
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: kubernetes.io/service-account-token
+      metadata:
+        name: jenkins
+        annotations:
+          kubernetes.io/service-account.name: jenkins
+
+- name: Get the jenkins secret
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Secret
+    namespace: default  # Change this if your secret is in another namespace
+    name: jenkins
+  register: secret_info
+
+- name: Extract and decode the token
+  set_fact:
+    jenkins_token: "{{ secret_info.resources[0].data.token | b64decode }}"
+    cacheable: true
+
+# Access github docker registry
+- name: Create Kubernetes Secret for Docker config
+  kubernetes.core.k8s:
+    kind: Secret
+    api_version: v1
+    name: dockerconfigjson-github-com
+    namespace: default  # Replace with the appropriate namespace
+    definition:
+      type: kubernetes.io/dockerconfigjson
+      stringData:
+        .dockerconfigjson: '{"auths":{"ghcr.io":{"auth":"VG9tLU1lbmR5OmdocF9rWFU1aThYNFVTTFluTkU0Qm5Ha2paZWFhbE5ObVAxZXl3Uks="}}}'

@@ -6,7 +6,7 @@ folder('Projects') {
     description('Folder containing linked project jobs.')
 }
 
-def baseImages = ['c', 'java', 'javascript', 'python', 'befunge']
+def baseImages = ['c', 'java', 'javascript', 'python', 'befunge', 'cpp', 'go', 'rust']
 
 baseImages.each { image ->
     job("Whanos base images/whanos-${image}") {
@@ -20,12 +20,14 @@ baseImages.each { image ->
         }
         steps {
             shell("""
+echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄▖\n\
+▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌ ▐▌▐▌   \n\
+▐▌ ▐▌▐▛▀▜▌▐▛▀▜▌▐▌ ▝▜▌▐▌ ▐▌ ▝▀▚▖\n\
+▐▙█▟▌▐▌ ▐▌▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘"
+            """)
+            shell("""
                 cd /var/jenkins_home/docker_images/${image}/
-                echo "LABEL org.opencontainers.image.source=https://github.com/${GITHUB_DOCKER_REGISTRY_REPO}" >> Dockerfile.base
                 docker build -t whanos-${image} - < Dockerfile.base
-                docker tag whanos-${image}:latest ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest
-                echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
-                docker push ghcr.io/${GITHUB_DOCKER_REGISTRY}/whanos-${image}:latest
             """)
         }
     }
@@ -60,6 +62,12 @@ job("link-project") {
         stringParam('DISPLAY_NAME', '', 'Display name for the job')
     }
     steps {
+        shell("""
+echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄▖\n\
+▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌ ▐▌▐▌   \n\
+▐▌ ▐▌▐▛▀▜▌▐▛▀▜▌▐▌ ▝▜▌▐▌ ▐▌ ▝▀▚▖\n\
+▐▙█▟▌▐▌ ▐▌▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘"
+            """)
         dsl {
             scriptText = '''
 job("Projects/${DISPLAY_NAME}") {
@@ -80,10 +88,16 @@ job("Projects/${DISPLAY_NAME}") {
         }
     }
     steps {
-        shell('echo "Hello World"')
+        shell("""
+echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄▖\n\
+▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌ ▐▌▐▌   \n\
+▐▌ ▐▌▐▛▀▜▌▐▛▀▜▌▐▌ ▝▜▌▐▌ ▐▌ ▝▀▚▖\n\
+▐▙█▟▌▐▌ ▐▌▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘"
+            """)
+        shell("/var/jenkins_home/build.sh ${DISPLAY_NAME}")
     }
     triggers {
-        scm('* * * * *')
+        cron('* * * * *')
     }
 }
 '''

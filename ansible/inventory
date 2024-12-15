@@ -1,7 +1,0 @@
-jenkins:
-  hosts:
-    172.232.46.252
-
-registry:
-  hosts:
-    172.232.46.252

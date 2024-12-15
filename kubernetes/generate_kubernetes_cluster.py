@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import yaml
 
 
@@ -20,7 +21,7 @@ def parse_whanos_yaml(file_path):
         exit(2)
 
 
-def generate_kubernetes_manifest(config):
+def generate_kubernetes_manifest(config, image_name):
     deployment_yaml = {
         "apiVersion": "apps/v1",
         "kind": "Deployment",
@@ -34,7 +35,7 @@ def generate_kubernetes_manifest(config):
                     "containers": [
                         {
                             "name": "whanos-container",
-                            "image": "whanos/whanos:latest",
+                            "image": image_name,
                             "ports": [
                                 {"containerPort": port} for port in config.get(
                                     "ports", [8080])
@@ -53,6 +54,11 @@ def generate_kubernetes_manifest(config):
                                 },
                             ),
                         }
+                    ],
+                    "imagePullSecrets": [
+                        {
+                            "name": "dockerconfigjson-github-com"
+                        }
                     ]
                 },
             },
@@ -61,14 +67,41 @@ def generate_kubernetes_manifest(config):
     return deployment_yaml
 
 
+def generate_service_manifest(config):
+    service_yaml = {
+        "apiVersion": "v1",
+        "kind": "Service",
+        "metadata": {"name": "whanos-service", "namespace": "default"},
+        "spec": {
+            "selector": {"app": "whanos"},
+            "ports": [
+                {"protocol": "TCP", "port": port, "targetPort": port, "nodePort": 30100}
+                for port in config.get("ports", [8080])
+            ],
+            "type": "NodePort",
+        },
+    }
+    return service_yaml
+
+
+if (len(sys.argv) < 2):
+    print("Usage: generate_kubernetes_cluster.py <image_name>")
+    exit(1)
+
 try:
     whanos_config = parse_whanos_yaml('whanos.yml')
 except ValueError as e:
     print(f"Error: {e}")
     exit(1)
 
-whanos_manifest = generate_kubernetes_manifest(whanos_config)
+whanos_manifest = generate_kubernetes_manifest(whanos_config, sys.argv[1])
 
 output_file = 'whanos-deployment.yaml'
 with open(output_file, 'w') as yaml_file:
     yaml.dump(whanos_manifest, yaml_file, default_flow_style=False)
+
+whanos_service = generate_service_manifest(whanos_config)
+
+output_file = 'whanos-service.yaml'
+with open(output_file, 'w') as yaml_file:
+    yaml.dump(whanos_service, yaml_file, default_flow_style=False)

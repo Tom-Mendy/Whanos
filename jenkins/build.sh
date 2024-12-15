@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 LANGUAGE=""
-REGISTRY=github.com/${GITHUB_DOCKER_REGISTRY_REPO}"
+REGISTRY="ghcr.io/${GITHUB_DOCKER_REGISTRY}"
 JOB_NAME=$1
+IMAGES_DIR="/var/jenkins_home/docker_images"
 
 if [[ $JOB_NAME == "" ]]; then
     echo ""
@@ -44,28 +45,64 @@ if [[ -f app/main.bf ]]; then
     fi
     LANGUAGE="befunge"
 fi
+# BONUS LANGUAGES
+if [[ -f app/go.mod ]]; then
+    if [[ ${LANGUAGE} != "" ]]; then
+        LanguageNotSupported
+    fi
+    LANGUAGE="go"
+fi
+if [[ -f CMakeLists.txt ]]; then
+    if [[ ${LANGUAGE} != "" ]]; then
+        LanguageNotSupported
+    fi
+    LANGUAGE="cpp"
+fi
+if [[ -f Cargo.toml ]]; then
+    if [[ ${LANGUAGE} != "" ]]; then
+        LanguageNotSupported
+    fi
+    LANGUAGE="rust"
+fi
 
-if [[ ${LANGUAGE} != "" ]]; then
+
+if [[ ${LANGUAGE} == "" ]]; then
     echo "Invalid project: no language matched."
     exit 1
 fi
 
+echo "language is ${LANGUAGE}"
+
 # $1: the name of the job
 image_name="whanos-${JOB_NAME}-${LANGUAGE}"
-image_name_remote_repo="${REGISTRY}/whanos/whanos-$1-${LANGUAGE}"
+image_name_remote_repo="${REGISTRY}/whanos-${JOB_NAME}-${LANGUAGE}"
 
 if [[ -f Dockerfile ]]; then
     docker build . -t "${image_name}"
     docker tag "${image_name}:latest" "${image_name_remote_repo}:latest"
+    echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
     docker push "${image_name_remote_repo}:latest"
 else
     docker build . \
-        -f "/home/jenkins/images/${LANGUAGE[0]}/Dockerfile.standalone" \
-        -t "${image_name}-standalone"
-    docker tag "${image_name}-standalone:latest" "${image_name_remote_repo}-standalone:latest"
-    docker push "${image_name_remote_repo}-standalone:latest"
+        -f "${IMAGES_DIR}/${LANGUAGE}/Dockerfile.standalone" \
+        -t "${image_name}"
+    docker tag "${image_name}:latest" "${image_name_remote_repo}:latest"
+    echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
+    docker push "${image_name_remote_repo}:latest"
 fi
 
 if [[ -f "whanos.yml" ]]; then
     echo "launch kubernetes"
+    # Authenticate kubectl
+    kubectl config set-cluster my-cluster --server=${KUBE_SERVER} --insecure-skip-tls-verify=true
+    kubectl config set-credentials my-user --token=${KUBE_TOKEN}
+    kubectl config set-context my-context --cluster=my-cluster --user=my-user --namespace=default
+    kubectl config use-context my-context
+
+    # Test kubectl connectivity
+    kubectl get nodes
+
+    /var/jenkins_home/kubernetes/generate_kubernetes_cluster.py "$image_name_remote_repo"
+    kubectl apply -f whanos-deployment.yaml
+    kubectl apply -f whanos-service.yaml
 fi

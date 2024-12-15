@@ -1,29 +1,15 @@
-FROM maven:3.9.6 AS build
+FROM maven:3.9.6
 
 SHELL ["/bin/bash", "-c"]
 
 WORKDIR /app
 
-LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+ONBUILD COPY app/pom.xml /app
 
-ONBUILD COPY pom.xml /app
+ONBUILD RUN mvn dependency:go-offline
 
-ONBUILD RUN set -eux; \
-            mvn dependency:go-offline
+ONBUILD COPY ./app /app
 
-ONBUILD RUN set -eux; \
-            rm -rf pom.xml
+ONBUILD RUN mvn package
 
-ONBUILD COPY . /app
-
-ONBUILD RUN set -eux; \
-            mvn package
-
-
-FROM openjdk:21-jdk AS standalone
-
-WORKDIR /app
-
-COPY --from=build /app/target/app.jar app.jar
-
-ONBUILD CMD ["java", "-jar", "app.jar"]
+ONBUILD CMD ["java", "-jar", "target/app.jar"]

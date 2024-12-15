@@ -4,11 +4,32 @@
     dest: ~/
     mode: '0644'
 
+- name: Make build.sh executable
+  ansible.builtin.file:
+    path: ~/jenkins/build.sh
+    mode: '0755'
+
 - name: Upload images
   ansible.builtin.copy:
     src: ../../../../images
     dest: ~/
     mode: '0644'
+
+- name: Upload kubernetes file
+  ansible.builtin.copy:
+    src: ../../../../kubernetes
+    dest: ~/
+    mode: '0644'
+
+- name: Make build.sh executable
+  ansible.builtin.file:
+    path: ~/kubernetes/generate_kubernetes_cluster.py
+    mode: '0755'
+
+- name: Set environment variable KUBE_TOKEN
+  command: echo "Environment variable set"
+  environment:
+    KUBE_TOKEN: "eyJhbGciOiJSUzI1NiIsImtpZCI6IndxN3BrazBqQkt3V3dFQjNmSDRhZHgtR2l6YkxaZkVVVFNLbENCWkNKc1kifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjJmYzc0NWE1LTYzMjYtNDI3My04NGI5LWU5YjYwOTQ3MzFiZCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmplbmtpbnMifQ.HuCW9t_BN-h3GneUPTcUwMWBd03mhmjDu2_xAXXuKYhShGV1KUjX510pYr9aRUTg75YIA270CvyKMuGxfbu-MxPPQ_6Mmrlj1D1ROWQIUW7KzdJbivJtotXjpyuHy66lMg9McKUUoceYz01cX3LkpH9iPwzQyAe3EAU1LHBGt7wG5aec4gor1RLfifiZDfXtO35jjPtZzgKDuBnJPc9gAcPX2wQe7nBNhBS15wxhUC4WFoCIFtHwTvwO_cwTPCjMjxkYmmIf6N74HuaVGqYDymLO9rLF_-QdnNtPwI--4H1OoTcuehpLaA_mhqkvqDsrKYOyT5rrLzqtqcxZKVXN1g"
 
 - name: Deploy jenkins
   community.docker.docker_compose_v2:

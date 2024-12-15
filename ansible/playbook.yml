@@ -1,28 +1,26 @@
+- hosts: localhost
+  become: false
+  roles:
+    - terraform
+
+- hosts: kube_control_plane
+  roles:
+    - base
+
+- hosts: kube_node
+  roles:
+    - base
+
+- name: Install Kubernetes
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+
+- hosts: kube_control_plane
+  roles:
+    - kubernetes
+
 - hosts: jenkins
   become: true
   roles:
     - base
     - docker
     - jenkins
-
-- hosts: registry
-  become: true
-  roles:
-    - base
-    - docker
-    - registry
-
-# - hosts: poll
-#   become: true
-#   roles:
-#     - poll
-
-# - hosts: worker
-#   become: true
-#   roles:
-#     - worker
-
-# - hosts: result
-#   become: true
-#   roles:
-#     - result

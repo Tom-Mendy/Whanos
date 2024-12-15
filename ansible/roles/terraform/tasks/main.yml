@@ -1,0 +1,91 @@
+---
+- name: Create a venv
+  command:
+    cmd: python3 -m venv ./venv
+  args:
+    creates: ./venv
+
+- name: Ensure pip is installed in venv
+  command:
+    cmd: ./venv/bin/python -m ensurepip --upgrade
+  args:
+    creates: ./venv/bin/pip
+  register: ensurepip_result
+
+- name: Upgrade pip in venv
+  command:
+    cmd: ./venv/bin/python -m pip install --upgrade pip setuptools wheel
+  when: ensurepip_result is succeeded
+  args:
+    creates: ./venv/bin/pip
+
+- name: Install jmespath in venv
+  command:
+    cmd: ./venv/bin/pip install jmespath
+  args:
+    creates: ./venv/lib/python3.12/site-packages/jmespath
+
+- name: Initialize Terraform
+  command:
+    cmd: terraform init
+    chdir: ../terraform
+  register: terraform_init_result
+  changed_when: "'Terraform has been successfully initialized!' in terraform_init_result.stdout"
+
+- name: Plan Terraform Deployment
+  command:
+    cmd: terraform plan
+    chdir: ../terraform
+  register: terraform_plan_result
+
+- name: Apply Terraform Deployment
+  command:
+    cmd: terraform apply -auto-approve
+    chdir: ../terraform
+  register: terraform_apply_result
+
+- name: Get Terraform Output
+  command:
+    cmd: terraform output -json
+    chdir: ../terraform
+  register: terraform_output_result
+
+- name: Create dynamic inventory
+  command:
+    cmd: ./venv/bin/python -c 'import jmespath; import json; print(json.dumps(jmespath.search("instance_ips", json.loads("""{{ terraform_output_result.stdout }}"""))))'
+  register: parsed_terraform_output_result
+  changed_when: false
+
+- name: Generate dynamic inventory content
+  command:
+    cmd: "{{ lookup('env', 'PWD') }}/parse_ips.py '{{ parsed_terraform_output_result.stdout | to_json }}'"
+  register: inventory_content
+
+- name: Debug inventory content
+  debug:
+    var: inventory_content.stdout
+
+
+- name: Write dynamic inventory content in the ini file
+  ansible.builtin.lineinfile:
+    path: "{{ lookup('env', 'PWD') }}/inventory.ini"
+    line: "{{ inventory_content.stdout }}"
+    create: yes
+    mode: '0664'
+
+- name: Genreate dynamic IP for .env file
+  command:
+    cmd: "{{ lookup('env', 'PWD') }}/parse_ips.py"
+  register: kube_server_ip
+
+- name: Write the Kube_server IP in the .env file
+  ansible.builtin.lineinfile:
+    path: "{{ lookup('env', 'PWD') }}/../../.env"
+    line: "{{ kube_server_ip.stdout }}"
+    create: yes
+    mode: '0664'
+
+# - meta: refresh_inventory
+
+- name: Refresh inventory
+  meta: refresh_inventory

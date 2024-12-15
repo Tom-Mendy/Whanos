@@ -1,0 +1,28 @@
+FROM golang:1.23 AS dependencies
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+COPY . /app
+
+RUN cd app && go mod download
+
+
+FROM dependencies AS build
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+RUN cd app && go build -o compiled-app
+
+FROM ubuntu:24.04 AS standalone
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+COPY --from=build /app/app/compiled-app /app/compiled-app
+
+CMD ["/app/compiled-app"]

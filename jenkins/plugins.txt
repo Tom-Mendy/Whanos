@@ -16,3 +16,7 @@ ssh-credentials
 git
 credentials-binding
 scm-api
+kubernetes
+kubernetes-cli
+kubernetes-credentials
+conditional-buildstep

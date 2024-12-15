@@ -1,110 +1,164 @@
-## Docker Documentation
+# Docker Images Documentation: Standalone and Base using C and C++ for examples
 
-## **Introduction**
+## Overview
 
-In the Whanos project, Docker images are essential for containerizing and running applications. Two types of images are defined:
-
-1. **Base Image**: Provides a foundational environment for building and running applications. These are general-purpose and intended for further customization by applications that need specific configurations.
-2. **Standalone Image**: A complete and self-sufficient image for running applications without further modification.
-
-Both image types are designed to align with Whanos' infrastructure and support the specified languages (C, Java, JavaScript, Python, and Befunge).
+This documentation describes the structure and usage of two types of Docker images for C/C++ applications: **Standalone** and **Base** images. These images are used for building and deploying applications, leveraging multi-stage builds and the `ONBUILD` instruction for automation.
 
 ---
 
-### **Base Image**
+## **Standalone Image**
 
-A base image sets up the basic environment required to run applications. It includes:
+A **Standalone image** is a fully configured image that includes everything needed to build and run an application. It copies source code, builds the application, and provides a minimal runtime environment with only the necessary files.
 
-- Essential runtime tools and dependencies.
-- No application-specific files or build steps.
-- Prepared for customization through `FROM`.
+### **Example: Standalone Dockerfile for C++**
 
-#### **Example**: Base Image for Python
+```dockerfile
+FROM gcc:13.2 AS build
 
-```Dockerfile
-FROM debian:stable-slim
-
-RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends \
-        python-is-python3
-
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+SHELL ["/bin/bash", "-c"]
 
 WORKDIR /app
 
-LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
-
-CMD ["python3.12", "-m", "app"]
-```
-
-**Commands Explanation**:
-
-- **`FROM debian:stable-slim`**: Sets the base operating system for the image (Debian in this case).
-- **`RUN set -eux;`**: Enables safe scripting by:
-  - Exiting on errors (`-e`).
-  - Treating unset variables as errors (`-u`).
-  - Printing commands and arguments during execution (`-x`).
-- **`apt-get install`**: Installs required tools and dependencies (e.g., Python in this example).
-- **`apt-get clean` & `rm -rf /var/lib/apt/lists/*`**: Cleans up package manager cache to minimize image size.
-- **`WORKDIR /app`**: Defines the working directory for application files.
-- **`LABEL org.opencontainers.image.source`**: Adds metadata for the image's source repository.
-- **`CMD`**: Specifies the default command when the container starts. It can be overridden during runtime.
-
----
-
-#### **Standalone Image**
-
-A standalone image builds upon the base image by including application-specific files and performing any required build or setup steps. It’s ready to run the application without further modifications.
-
-##### **Example**: Standalone Image for JavaScript
-
-```Dockerfile
-FROM whanos-javascript
-
 COPY . /app
 
-RUN set -eux; \
-    npm install
+RUN make
 
-CMD ["node", "."]
+FROM ubuntu:24.04 AS standalone
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+COPY --from=build /app/compiled-app /app/compiled-app
+
+CMD ["/app/compiled-app"]
 ```
 
-**Commands Explanation**:
+### Explanation Standalone
 
-- **`FROM whanos-javascript`**: Inherits from the JavaScript base image.
-- **`COPY . /app`**: Copies application files into the `/app` directory.
-- **`RUN npm install`**: Installs application dependencies using `npm`.
-- **`CMD ["node", "."]`**: Executes the application using Node.js.
-
----
-
-#### **Key Differences**
-
-| Feature               | Base Image                       | Standalone Image                            |
-| --------------------- | -------------------------------- | ------------------------------------------- |
-| **Purpose**           | Foundation for customization.    | Fully configured for execution.             |
-| **Application Files** | Not included.                    | Included and prepared to run.               |
-| **Dependencies**      | General runtime dependencies.    | Includes application-specific dependencies. |
-| **Example Use**       | As `FROM` in another Dockerfile. | Direct deployment.                          |
+- **Multi-Stage Build**: The build stage compiles the application, and the standalone stage creates a lightweight image by copying only the necessary output (the compiled binary).
+- **Minimal Runtime Image**: The runtime image uses `ubuntu:24.04` to keep the image as small as possible.
+- **CMD**: The default command is set to run the compiled binary `compiled-app`.
 
 ---
 
-#### **Dockerfile Commands Overview**
+## **Base Image**
 
-- **`FROM`**: Specifies the base image for the build. All instructions after this will layer onto the specified image.
-- **`RUN`**: Executes commands during image build, such as installing dependencies or cleaning up.
-- **`WORKDIR`**: Sets the working directory for `RUN`, `CMD`, and other instructions.
-- **`COPY`**: Copies files from the host to the image.
-- **`LABEL`**: Adds metadata to the image, such as the repository source.
-- **`CMD`**: Defines the default command executed when the container runs. It can be overridden with `docker run`.
+A **Base image** is designed to provide a foundational environment for building and running an application. It can be extended by other Dockerfiles, which can customize the behavior (e.g., copying application code or adding build steps). The `ONBUILD` instruction is used to automate tasks in the derived images.
+
+### **Example: Base Dockerfile for C**
+
+```dockerfile
+FROM gcc:13.2
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /app
+
+LABEL org.opencontainers.image.title="Whanos C Base Image" \
+      org.opencontainers.image.description="A base image for building and deploying C applications using Makefile." \
+      org.opencontainers.image.version="1.0"
+
+ONBUILD COPY . /app
+
+ONBUILD RUN set -eux; \
+            make
+
+ONBUILD RUN set -eux; \
+            rm -rf *.c *.h Makefile
+
+ONBUILD CMD ["./compiled-app"]
+```
+
+### Explanation Base
+
+- **set -eux;**: Configures the shell to:
+  - `-e`: Exit immediately if a command exits with a non-zero status.
+  - `-u`: Treat unset variables as an error and exit immediately.
+  - `-x`: Print each command to the terminal before executing it.
+- **ONBUILD**: Specifies tasks (like copying files, building the app, and cleaning up unnecessary files) that execute when this base image is used in a derived Dockerfile.
+- **Metadata**: Labels are included for traceability and documentation.
+- **Build and Clean**: The derived image automatically copies files, builds the application using `make`, and cleans up unnecessary files (source code and Makefile).
 
 ---
 
-#### **Best Practices**
+## **How to Use These Images**
 
-1. **Minimize Layers**: Combine `RUN` commands to reduce image layers.
-2. **Clean Up**: Remove unnecessary files and caches to keep the image size small.
-3. **Metadata**: Use `LABEL` to provide useful information about the image.
-4. **Use `set -eux`**: Ensures reliability and debugging information during builds.
+### 1. **Standalone Image Usage Example**
 
-By understanding the role and components of base and standalone images, you can build efficient and reusable Docker images tailored for the Whanos infrastructure.
+You can create used this image with a specifiq project archi:
+
+```bash
+tree c-hello-world 
+ c-hello-world
+├──  app
+│  └──  hello.c
+├──  Dockerfile <== docker standalone c
+└──  Makefile
+```
+
+#### Build the Image
+
+```bash
+docker build -t my-cpp-app .
+```
+
+#### Run the Application
+
+```bash
+docker run --rm my-cpp-app
+```
+
+---
+
+### 2. **Base Image Usage Example**
+
+To use the Base image, you would typically have a Dockerfile like the following:
+
+```dockerfile
+FROM whanos-cpp-base
+
+# Optionally override the CMD or add more configurations
+CMD ["/app/custom-compiled-app"]
+```
+
+#### Build the Base Image
+
+```bash
+docker build -t whanos-cpp-base -f Dockerfile.base .
+```
+
+#### Build the Derived Image
+
+```bash
+docker build -t my-cpp-app .
+```
+
+#### Run the Application
+
+```bash
+docker run --rm my-cpp-app
+```
+
+---
+
+## **Comparison: Standalone vs Base Image**
+
+| **Feature**           | **Standalone Image**                                   | **Base Image**                                             |
+|------------------------|-------------------------------------------------------|-----------------------------------------------------------|
+| **Purpose**            | A complete image ready for running the app.           | A base image for building the app in derived images.       |
+| **Application Files**  | Includes compiled application and runtime tools.      | Does not include application files; extends with `ONBUILD`.|
+| **Dependencies**       | Fully configured with dependencies.                   | Needs to be extended by another Dockerfile to configure dependencies. |
+| **Customization**      | Ready to use but less flexible.                       | Allows full customization by the derived image.           |
+| **Size**               | Larger, includes everything to run the app.           | Smaller, only contains necessary tools for building.       |
+
+---
+
+## **Conclusion**
+
+Both Standalone and Base Docker images have their specific use cases:
+
+- **Standalone images** are best for fully packaged applications, ready to run with minimal configuration.
+- **Base images** are ideal for creating reusable and flexible development environments, where the build process and additional configurations can be specified in derived Dockerfiles.
+
+This approach provides flexibility, efficiency, and scalability for managing Docker images in C/C++ projects.

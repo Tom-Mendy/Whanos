@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM gcc:13.2
 
 SHELL ["/bin/bash", "-c"]
 
@@ -12,11 +12,13 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY befunge /app/
+LABEL org.opencontainers.image.title="Whanos befunge Base Image" \
+      org.opencontainers.image.description="A base image for building and deploying befunge applications using c transpilator." \
+      org.opencontainers.image.version="1.0"
 
-LABEL org.opencontainers.image.source=https://github.com/Tom-Mendy/Whanos
+ONBUILD COPY app/ /app
 
-ONBUILD COPY . /app
+ONBUILD COPY befunge/ /app
 
 ONBUILD RUN set -eux; \
             ./compile.sh main.bf executable
