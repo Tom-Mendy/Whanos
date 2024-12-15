@@ -66,11 +66,26 @@
     var: inventory_content.stdout
 
 
-- name: Write dynamic inventory content (alternative method)
+- name: Write dynamic inventory content in the ini file
   ansible.builtin.lineinfile:
     path: "{{ lookup('env', 'PWD') }}/inventory.ini"
     line: "{{ inventory_content.stdout }}"
     create: yes
     mode: '0664'
 
-- meta: refresh_inventory
+- name: Genreate dynamic IP for .env file
+  command:
+    cmd: "{{ lookup('env', 'PWD') }}/parse_ips.py"
+  register: kube_server_ip
+
+- name: Write the Kube_server IP in the .env file
+  ansible.builtin.lineinfile:
+    path: "{{ lookup('env', 'PWD') }}../../.env"
+    line: "{{ kube_server_ip.stdout }}"
+    create: yes
+    mode: '0664'
+
+# - meta: refresh_inventory
+
+- name: Refresh inventory
+  meta: refresh_inventory

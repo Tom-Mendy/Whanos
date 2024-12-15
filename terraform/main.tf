@@ -9,7 +9,7 @@ terraform {
 
 
 provider "linode" {
-  token = jsondecode(file("./linode_token.json")).linode_token
+  token = jsondecode(file("../linode_token.json")).linode_token
 }
 
 resource "linode_instance" "ubuntu_instance" {
