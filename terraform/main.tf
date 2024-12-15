@@ -13,10 +13,10 @@ provider "linode" {
 }
 
 resource "linode_instance" "ubuntu_instance" {
-  count     = 1
+  count     = 4
   label     = "ubuntu-instance-${count.index + 1}"
   region    = "eu-central"
-  type      = "g6-nanode-1"
+  type      = "g6-standard-2"
   image     = "linode/ubuntu22.04"
   root_pass = "your-secure-password"
 
