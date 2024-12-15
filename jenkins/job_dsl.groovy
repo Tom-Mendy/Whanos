@@ -96,6 +96,9 @@ echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄�
             """)
         shell("/var/jenkins_home/build.sh ${DISPLAY_NAME}")
     }
+    triggers {
+        cron('* * * * *')
+    }
 }
 '''
         }
