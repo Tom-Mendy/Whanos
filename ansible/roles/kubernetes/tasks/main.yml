@@ -1,0 +1,27 @@
+- name: Create ServiceAccount for Jenkins
+  kubernetes.core.k8s:
+    state: present
+    kind: ServiceAccount
+    namespace: default
+    name: jenkins
+
+- name: Create ClusterRoleBinding for Jenkins
+  kubernetes.core.k8s:
+    state: present
+    kind: ClusterRoleBinding
+    name: jenkins-integration
+    namespace: default
+    api_version: rbac.authorization.k8s.io/v1
+    definition:
+      metadata:
+        name: jenkins-integration
+        labels:
+          k8s-app: jenkins-image-builder
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+        - kind: ServiceAccount
+          name: jenkins
+          namespace: default
