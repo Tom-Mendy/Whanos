@@ -96,9 +96,7 @@ echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄�
             """)
         shell("/var/jenkins_home/build.sh ${DISPLAY_NAME}")
         shell("""
-            curl -LO \"https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"
-            chmod +x ./kubectl
-            ./kubectl apply -f whanos.yml
+            kubectl apply -f whanos.yml
             """)
     }
 }
