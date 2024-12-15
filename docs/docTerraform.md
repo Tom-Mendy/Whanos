@@ -95,7 +95,7 @@ The result will be a list of public IPv4 addresses for the created Linode instan
 
 3. **SSH Key:** Ensure you have an SSH public key file (`id_rsa_single_line.pub`) to use for authentication on the Linode instances.
 
-## Usage
+## Basic Usage
 
 1. **Initialize Terraform:**
 
@@ -134,6 +134,9 @@ The result will be a list of public IPv4 addresses for the created Linode instan
    ```bash
    terraform destroy
    ```
+
+## Our Usage
+In our case all the terrafrom process is automated in an ansible job. That permit us to have a more secure and fast process.
 
 ## Notes
 
