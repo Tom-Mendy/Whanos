@@ -2,10 +2,15 @@ FROM jenkins/jenkins:lts
 
 WORKDIR /var/jenkins_home
 
-# Install make, gcc and libcriterion-dev for testing
 USER root
+
+# Install make, gcc and libcriterion-dev for testing
 RUN apt-get update && apt-get install build-essential docker.io -y
 RUN usermod -aG docker jenkins
+
+# install kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 USER jenkins
 
