@@ -1,17 +1,13 @@
 # Whanos main documentation
 
 ## Table of Contents
-- [Overview](#overview)
-  - [Description](#description)
-  - [Features](#features)
-- [How to launch the project](#how-to-launch-the-project)
-- [Needed Files](#needed-files)
-- [Documentation of registry](./docs/registry.md)
-- [Documentation of Docker](./docs/dockerDocs.md)
-- [Documentation of Kubernetes](./docs/docKubernetes.md)
-- [Documentation of Terraform](./docs/docTerraform.md)
-- [Documentation of Ansible](./docs/docAnsible.md)
-- [Documentation of Jenkins](./docs/docJenkins.md)
+- [Whanos main documentation](#whanos-main-documentation)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+    - [Description](#description)
+    - [Features](#features)
+  - [How to launch the project](#how-to-launch-the-project)
+  - [Needed Files](#needed-files)
 
 ## Overview
 
@@ -29,21 +25,26 @@ The goal of Whanos is to integrate various DevOps technologies into a unified sy
 - With Whanos, developers can benefit from a robust and automated pipeline that significantly simplifies the process of deploying applications.
 
 ## How to launch the project
+
 First, you need to run the `run.sh` script.
+
 ```bash
 ./run.sh
 ```
 When the script finishes, you can access the Jenkins instance by going to the following port: **30100**
 
 ## Needed Files
+
 To launch this project you need to have the following files at the root of the repository:
 
 - `linode_token.json`: This file should contain your access token to Linode API. It should be a JSON file with the following structure:
+
 ```json
 {
-    "linode_token": "YOUR_TOKEN"
+  "linode_token": "YOUR_TOKEN"
 }
 ```
+
 To get this token you need to create a Linode account and generate a token [here](https://cloud.linode.com/profile/tokens), by clicking on the **"Create A Personal Access Token"** button.
 
 - `private_key`: This file should contain your private key to access the Linode instances. [Here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) is a guide on how to generate a private key. After, generating the key, take your public one, and add it [here](https://cloud.linode.com/profile/keys), and click on the **"Add An SSH Key"**. Do not forget to add a blank line at the end of the file that contains the private key.
@@ -51,6 +52,9 @@ To get this token you need to create a Linode account and generate a token [here
 - `id_rsa_single_line.pub`: This file should contain your public key to access the Linode instances. It should be a single line file.
 
 - `.env`: This file should contain the following variables:
+<<<<<<< HEAD
+  - `GITHUB_DOCKER_REGISTRY`: The URL of the Docker registry.
+=======
     - `GITHUB_DOCKER_REGISTRY`: Name of the registry on github (name of your github account but in lowercase).
     - `GITHUB_DOCKER_REGISTRY_USERNAME`: Name of your github account.
     - `GITHUB_DOCKER_REGISTRY_TOKEN`: The token to access the Docker registry refer to [this](./docs/registry.md) for more information.
@@ -58,3 +62,4 @@ To get this token you need to create a Linode account and generate a token [here
     - `USER_ADMIN_PASSWORD`: The name of the admin user of the jenkins instance.
 
 All other variables that are used in the project are set automatically by some ansible jobs.
+>>>>>>> 4cd0d821a3da408421e624317b11c87f51ba3cc2
