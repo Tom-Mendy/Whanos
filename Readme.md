@@ -31,8 +31,7 @@ First, you need to run the `run.sh` script.
 ```bash
 ./run.sh
 ```
-
-When the script finishes, you can access the Jenkins instance by going to the following URL: **30100**
+When the script finishes, you can access the Jenkins instance by going to the following port: **30100**
 
 ## Needed Files
 
