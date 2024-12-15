@@ -31,6 +31,19 @@
           name: jenkins
           namespace: default
 
+- name: Create a Kubernetes Secret for the Jenkins service account
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: kubernetes.io/service-account-token
+      metadata:
+        name: jenkins
+        annotations:
+          kubernetes.io/service-account.name: jenkins
+
+# Access github docker registry
 - name: Create Kubernetes Secret for Docker config
   kubernetes.core.k8s:
     kind: Secret
