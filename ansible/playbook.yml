@@ -6,12 +6,10 @@
 - hosts: kube_control_plane
   roles:
     - base
-    - docker
 
 - hosts: kube_node
   roles:
     - base
-    - docker
 
 - name: Install Kubernetes
   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
