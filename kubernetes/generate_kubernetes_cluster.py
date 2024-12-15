@@ -54,6 +54,11 @@ def generate_kubernetes_manifest(config, image_name):
                                 },
                             ),
                         }
+                    ],
+                    "imagePullSecrets": [
+                        {
+                            "name": "dockerconfigjson-github-com"
+                        }
                     ]
                 },
             },
