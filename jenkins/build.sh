@@ -58,13 +58,20 @@ if [[ -f CMakeLists.txt ]]; then
     fi
     LANGUAGE="cpp"
 fi
+if [[ -f Cargo.toml ]]; then
+    if [[ ${LANGUAGE} != "" ]]; then
+        LanguageNotSupported
+    fi
+    LANGUAGE="rust"
+fi
 
-echo "language is ${LANGUAGE}"
 
 if [[ ${LANGUAGE} == "" ]]; then
     echo "Invalid project: no language matched."
     exit 1
 fi
+
+echo "language is ${LANGUAGE}"
 
 # $1: the name of the job
 image_name="whanos-${JOB_NAME}-${LANGUAGE}"

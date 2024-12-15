@@ -6,7 +6,7 @@ folder('Projects') {
     description('Folder containing linked project jobs.')
 }
 
-def baseImages = ['c', 'java', 'javascript', 'python', 'befunge', 'cpp', 'go']
+def baseImages = ['c', 'java', 'javascript', 'python', 'befunge', 'cpp', 'go', 'rust']
 
 baseImages.each { image ->
     job("Whanos base images/whanos-${image}") {
@@ -95,9 +95,11 @@ echo "▗▖ ▗▖▗▖ ▗▖ ▗▄▖ ▗▖  ▗▖ ▗▄▖  ▗▄▄�
 ▐▙█▟▌▐▌ ▐▌▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘"
             """)
         shell("/var/jenkins_home/build.sh ${DISPLAY_NAME}")
-    }
-    triggers {
-        scm('* * * * *')
+        shell("""
+            curl -LO \"https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"
+            chmod +x ./kubectl
+            ./kubectl apply -f whanos.yml
+            """)
     }
 }
 '''
