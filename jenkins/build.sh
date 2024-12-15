@@ -104,4 +104,5 @@ if [[ -f "whanos.yml" ]]; then
 
     /var/jenkins_home/kubernetes/generate_kubernetes_cluster.py "$image_name_remote_repo"
     kubectl apply -f whanos-deployment.yaml
+    kubectl apply -f whanos-service.yaml
 fi
