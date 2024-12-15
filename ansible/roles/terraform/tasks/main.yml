@@ -1,3 +1,30 @@
+---
+- name: Create a venv
+  command:
+    cmd: python3 -m venv ./venv
+  args:
+    creates: ./venv
+
+- name: Ensure pip is installed in venv
+  command:
+    cmd: ./venv/bin/python -m ensurepip --upgrade
+  args:
+    creates: ./venv/bin/pip
+  register: ensurepip_result
+
+- name: Upgrade pip in venv
+  command:
+    cmd: ./venv/bin/python -m pip install --upgrade pip setuptools wheel
+  when: ensurepip_result is succeeded
+  args:
+    creates: ./venv/bin/pip
+
+- name: Install jmespath in venv
+  command:
+    cmd: ./venv/bin/pip install jmespath
+  args:
+    creates: ./venv/lib/python3.12/site-packages/jmespath
+
 - name: Initialize Terraform
   command:
     cmd: terraform init
@@ -24,14 +51,46 @@
   register: terraform_output_result
 
 - name: Create dynamic inventory
-  ansible.builtin.copy:
-    dest: ../../../inventory
-    content: |
-      [jenkins]
-        {{ terraform_output_result.stdout | from_json | json_query('instance_ips[0]') }}
-      [registry]
-        {{ terraform_output_result.stdout | from_json | json_query('instance_ips[1]') }}
+  command:
+    cmd: ./venv/bin/python -c 'import jmespath; import json; print(json.dumps(jmespath.search("instance_ips", json.loads("""{{ terraform_output_result.stdout }}"""))))'
+  register: parsed_terraform_output_result
+  changed_when: false
 
-- name: Ensure dynamic inventory is good
+- name: Generate dynamic inventory content
+  command: >
+    ./venv/bin/python -c "import json, jmespath;
+    terraform_output = json.loads(\"\"\"{
+      \"instance_ips\": {
+        \"sensitive\": false,
+        \"type\": [
+          \"tuple\",
+          [
+            [
+              \"set\",
+              \"string\"
+            ]
+          ]
+        ],
+        \"value\": [
+          [
+            \"139.162.188.52\"
+          ]
+        ]
+      }
+    }\"\"\");
+    instance_ips = terraform_output[\"instance_ips\"][\"value\"][0];
+    print(\"[jenkins]\\n{}\".format(instance_ips[0]))"
+  register: inventory_content
+
+- name: Debug inventory content
   debug:
-    msg: "{{ lookup('file', '../../../inventory') }}"
+    var: inventory_content.stdout
+
+
+- name: Write dynamic inventory content (alternative method)
+  ansible.builtin.lineinfile:
+    path: "{{ lookup('env', 'PWD') }}/inventory.ini"
+    line: "{{ inventory_content.stdout }}"
+    create: yes
+    mode: '0664'
+
