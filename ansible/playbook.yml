@@ -3,6 +3,11 @@
 #   roles:
 #     - terraform
 
+- hosts: localhost
+  become: false
+  roles:
+    - terraform
+
 - hosts: jenkins
   become: true
   roles:
@@ -10,5 +15,5 @@
     - docker
     - jenkins
 
-- name: Install Kubernetes
-  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
+# - name: Install Kubernetes
+#   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
