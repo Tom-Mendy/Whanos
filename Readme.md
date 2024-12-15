@@ -1,6 +1,7 @@
 # Whanos main documentation
 
 ## Table of Contents
+
 - [Whanos main documentation](#whanos-main-documentation)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
@@ -12,9 +13,11 @@
 ## Overview
 
 ### Description
+
 Whanos is a comprehensive DevOps solution designed to automatically containerize and deploy applications to a Kubernetes cluster with ease. By combining the power of Docker, Jenkins, Ansible, and Kubernetes, Whanos offers a seamless infrastructure for developers to deploy their applications directly from a Git repository with minimal manual effort.
 
 ### Features
+
 The goal of Whanos is to integrate various DevOps technologies into a unified system that performs the following tasks:
 
 - Fetch the application source code from a Git repository.
@@ -31,6 +34,7 @@ First, you need to run the `run.sh` script.
 ```bash
 ./run.sh
 ```
+
 When the script finishes, you can access the Jenkins instance by going to the following port: **30100**
 
 ## Needed Files
@@ -52,14 +56,10 @@ To get this token you need to create a Linode account and generate a token [here
 - `id_rsa_single_line.pub`: This file should contain your public key to access the Linode instances. It should be a single line file.
 
 - `.env`: This file should contain the following variables:
-<<<<<<< HEAD
-  - `GITHUB_DOCKER_REGISTRY`: The URL of the Docker registry.
-=======
-    - `GITHUB_DOCKER_REGISTRY`: Name of the registry on github (name of your github account but in lowercase).
-    - `GITHUB_DOCKER_REGISTRY_USERNAME`: Name of your github account.
-    - `GITHUB_DOCKER_REGISTRY_TOKEN`: The token to access the Docker registry refer to [this](./docs/registry.md) for more information.
-    - `SSH_PRIVATE_KEY`: your private key to access the Linode instances. On a single line with `\n` to separate each line.
-    - `USER_ADMIN_PASSWORD`: The name of the admin user of the jenkins instance.
+  - `GITHUB_DOCKER_REGISTRY`: Name of the registry on github (name of your github account but in lowercase).
+  - `GITHUB_DOCKER_REGISTRY_USERNAME`: Name of your github account.
+  - `GITHUB_DOCKER_REGISTRY_TOKEN`: The token to access the Docker registry refer to [this](./docs/registry.md) for more information.
+  - `SSH_PRIVATE_KEY`: your private key to access the Linode instances. On a single line with `\n` to separate each line.
+  - `USER_ADMIN_PASSWORD`: The name of the admin user of the jenkins instance.
 
 All other variables that are used in the project are set automatically by some ansible jobs.
->>>>>>> 4cd0d821a3da408421e624317b11c87f51ba3cc2
