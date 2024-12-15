@@ -85,12 +85,23 @@ if [[ -f Dockerfile ]]; then
 else
     docker build . \
         -f "${IMAGES_DIR}/${LANGUAGE}/Dockerfile.standalone" \
-        -t "${image_name}-standalone"
-    docker tag "${image_name}-standalone:latest" "${image_name_remote_repo}-standalone:latest"
+        -t "${image_name}"
+    docker tag "${image_name}:latest" "${image_name_remote_repo}:latest"
     echo ${GITHUB_DOCKER_REGISTRY_TOKEN} | docker login ghcr.io -u ${GITHUB_DOCKER_REGISTRY_USERNAME} --password-stdin
-    docker push "${image_name_remote_repo}-standalone:latest"
+    docker push "${image_name_remote_repo}:latest"
 fi
 
 if [[ -f "whanos.yml" ]]; then
     echo "launch kubernetes"
+    # Authenticate kubectl
+    kubectl config set-cluster my-cluster --server=${KUBE_SERVER} --insecure-skip-tls-verify=true
+    kubectl config set-credentials my-user --token=${KUBE_TOKEN}
+    kubectl config set-context my-context --cluster=my-cluster --user=my-user --namespace=default
+    kubectl config use-context my-context
+
+    # Test kubectl connectivity
+    kubectl get nodes
+
+    /var/jenkins_home/kubernetes/generate_kubernetes_cluster.py image_name_remote_repo
+    kubectl apply -f whanos-deployment.yaml
 fi

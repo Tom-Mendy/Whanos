@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import yaml
 
 
@@ -20,7 +21,7 @@ def parse_whanos_yaml(file_path):
         exit(2)
 
 
-def generate_kubernetes_manifest(config):
+def generate_kubernetes_manifest(config, image_name):
     deployment_yaml = {
         "apiVersion": "apps/v1",
         "kind": "Deployment",
@@ -34,7 +35,7 @@ def generate_kubernetes_manifest(config):
                     "containers": [
                         {
                             "name": "whanos-container",
-                            "image": "whanos/whanos:latest",
+                            "image": image_name,
                             "ports": [
                                 {"containerPort": port} for port in config.get(
                                     "ports", [8080])
@@ -61,13 +62,18 @@ def generate_kubernetes_manifest(config):
     return deployment_yaml
 
 
+
+if (len(sys.argv) < 2):
+    print("Usage: generate_kubernetes_cluster.py <image_name>")
+    exit(1)
+
 try:
     whanos_config = parse_whanos_yaml('whanos.yml')
 except ValueError as e:
     print(f"Error: {e}")
     exit(1)
 
-whanos_manifest = generate_kubernetes_manifest(whanos_config)
+whanos_manifest = generate_kubernetes_manifest(whanos_config, sys.argv[1])
 
 output_file = 'whanos-deployment.yaml'
 with open(output_file, 'w') as yaml_file:

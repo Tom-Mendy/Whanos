@@ -18,34 +18,6 @@ jenkins:
               - "Overall/Administer"
             entries:
               - user: "admin"
-  clouds:
-  - kubernetes:
-      containerCap: 10
-      containerCapStr: "10"
-      credentialsId: "kubernetes-secret"
-      name: "whanos-kubernetes-sample"
-      namespace: "default"
-      serverCertificate: |-
-        -----BEGIN CERTIFICATE-----
-        MIIDBTCCAe2gAwIBAgIIMn/C/6qY1FkwDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE
-        AxMKa3ViZXJuZXRlczAeFw0yNDEyMTQxNDE3MDZaFw0zNDEyMTIxNDIyMDZaMBUx
-        EzARBgNVBAMTCmt1YmVybmV0ZXMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
-        AoIBAQD0uQtIYfC/48u7WZqyXRpbYmM0Y/2z1WQiigMrEoP3fi5VuAJ3Kl44Y1xY
-        1YHhX6pN4pB4BFlqxD/xBIWyxHNUo9xOj9P8QGe6QGMBl+pjRZ/FEWiGXxJj+u2P
-        JGrcbDdEMCcR05NTrtZcUe1dxtg+JLkrxi3T+XCd2mGas9wZWH7jDKc3cZg5Awhm
-        w/yzCqlo/ck6WQXUHGb/9Hd+tJ/Eb0F7P9slH1IiksyGkodAMV6TE5FqtELUMrlh
-        a7cgDLYHjimGwHRs4QIREYyWX/1V8LLAcuNoe/TudFr0XidbuMciQoeRi0yzOxAH
-        cr3qVPhUc7pScAE8m73DisxZDiq/AgMBAAGjWTBXMA4GA1UdDwEB/wQEAwICpDAP
-        BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTlPmFVl71QI+k2nqmdn6jwLPGu7DAV
-        BgNVHREEDjAMggprdWJlcm5ldGVzMA0GCSqGSIb3DQEBCwUAA4IBAQBigI7n71Dl
-        OsbOKnNaX/62vwRW0B1JAsNlakrZlbjDgl71k9ae5wFTv0wwXABSuukxvHm9BpW/
-        4phUGeW7gsWNkBv7iABt3cc9q40d7vjjlvkE8rEa9d4LpuHUWbGuX/ZqQwZBqZzd
-        KnYXEysGATVQAm6B5XlIsX5sbDdk1rF7wRXkgNjwXFIRdv7Xg8fAA6IE/2rvGgOx
-        +JU8ABJm+dP0jaWNwVsxI3TJe/FjmiX+xMY/txNEIQLrpW4fDvLllTq9nJz6Nt5C
-        5R1kIDBqoJJhI9OGDIRX3n1ZTXFr5F0ehjayDCNHxryNSw+d+L/L+/dmcTlGxJz2
-        rgTPLS9HxO7A
-        -----END CERTIFICATE-----
-      serverUrl: "https://139.177.179.44:6443"
 jobs:
   - file: /var/jenkins_home/job_dsl.groovy
 security:
@@ -65,7 +37,3 @@ credentials:
               privateKey: ${SSH_PRIVATE_KEY}
           scope: GLOBAL
           username: "admin"
-      - string:
-          id: "kubernetes-secret"
-          scope: GLOBAL
-          secret: "{AQAAABAAAAOAmmf/BrEmuuFco3QsvC60ZEOWvDtui6TpbVi+Bl4B9rpUQb1GS01rvMDbA06ZQSikDRtH+S5GlSSZ5w1KytlnjMNPC3qJHjm4TaYpPdVD/cSnNFNOj3xj3GOgRjWp/OTzqYsQX545WsvE7A/zkxqXiSDhPC0AQQGDeRFnmSsTdSnHYZhruKa7uZVs6LbCGUDgwTC7U/vOzZG9ZJpapGYFuimMWKHnD7M2CjJfuCbhxmGG9gVkSgY3/tEfqAMkepsBBlFQshxt3p/wqlV175rS/xiLA4ZBNQIsQ7/sQ1Ox4fyi7xafnLErXzxFqXLhpVSnebu8MUhZ0RZZKEe+qFwHiRW/x8R9nrxs74rKifkUjsNYfnOD8ti7O1z+Y3EWUMaH6TDjwWzKRsBP/qQXA9PVmKcuDJ4BepEpFafR3eFT5WCggV1No+q1Le6Rcy7JafbcoRbAqiuJVdvi6x0y0H100exK/Ilt93xkefqidvDKpQH5MyQz9FujoQZOIqZrSgEN4UGQMh2hxmvoDYWE0me5TJxG4ujW4YYjxBsEIR+6OdZlZtYOX5YFuHcyXd1FoJPIvGlzaGMEGNzb64EBC8eYro3fdmPrAnBlBLnwGZW3SAU16r4dj+b9VexCFSUm/Kd/Uoe+cvzQfZ92eZc1xhK3IuBWFsO9jenJPLX7/4lw9uSVp5Y0r+Kr8bNEjqhzzxNZkaqmVNRdm9aJNBKni03izMUdH3rvTBG09EmOZ+aenvJ1v3xcCFUf68T/I6uJXBxxPZUXAhIO84nM/o3Wp1GHQWGrJB+7ymcmRUpQ54fzWpUWmcIK8e9Iem2qvEu3nOZYFsfPzqH3xaoUMxivDuaQe9YX0EpFFFyncrsFyAQCm6/V0FxTBWXgzwT56Ld9JP61MbotWV45WhlGeJDrHj/o+Ag/g+1Ibid9T6k2Ybst6UIDGkBsZUP58vo16nxHcaToYDLW1Kau3QZBzXB7dqO+BuBpGTu8QANQ5rvNd+QMojK6cy7waf7+rjbkmL0CneWZxWhuKV9GIfTF77D3IM1jfExI8n8Mb5OQMLRbv7ijO7ALjVOcvpIvFybEo347D+7NySkVPZTSnYDNMFLy5WuhOtP14IKU7nQbdR4bew1/xpmpt1fYE06e3Y9yfCbS6vl3EoB1vS72XOcsulYpV6YepLgfUS7dZbC0Bbj2XZOXQqR7Oo0hDRNDGSwIh2Vl+U0X}"
