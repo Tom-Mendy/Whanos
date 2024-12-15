@@ -12,4 +12,4 @@ parsed_json = json.loads(decoded_str)
 
 final_value = parsed_json["value"][0][0]
 
-print(f'[jenkins]\n{final_value}\n')
+print(f'[jenkins]\njenkins_service ansible_host={final_value}\n')
