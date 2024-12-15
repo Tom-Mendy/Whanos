@@ -102,6 +102,6 @@ if [[ -f "whanos.yml" ]]; then
     # Test kubectl connectivity
     kubectl get nodes
 
-    /var/jenkins_home/kubernetes/generate_kubernetes_cluster.py image_name_remote_repo
+    /var/jenkins_home/kubernetes/generate_kubernetes_cluster.py "$image_name_remote_repo"
     kubectl apply -f whanos-deployment.yaml
 fi
