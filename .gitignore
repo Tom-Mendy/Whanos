@@ -11,3 +11,4 @@ terraform/*.tfstate**
 terraform/*.lock**
 terraform/*.**
 ansible/*.tfstate
+id_rsa_single_line.pub

@@ -21,6 +21,6 @@ resource "linode_instance" "ubuntu_instance" {
   root_pass = "your-secure-password"
 
   authorized_keys = [
-    file("~/id_rsa_single_line.pub")
+    file("../id_rsa_single_line.pub")
   ]
 }
