@@ -13,34 +13,24 @@ A **Standalone image** is a fully configured image that includes everything need
 ### **Example: Standalone Dockerfile for C++**
 
 ```dockerfile
-# Stage 1: Build the application
 FROM gcc:13.2 AS build
 
-# Use Bash as the default shell
 SHELL ["/bin/bash", "-c"]
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the application files into the container
 COPY . /app
 
-# Build the application using Make
 RUN make
 
-# Stage 2: Standalone Image
 FROM ubuntu:24.04 AS standalone
 
-# Use Bash as the default shell
 SHELL ["/bin/bash", "-c"]
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the compiled application from the build stage
 COPY --from=build /app/compiled-app /app/compiled-app
 
-# Define the default command for running the compiled application
 CMD ["/app/compiled-app"]
 ```
 
@@ -59,37 +49,33 @@ A **Base image** is designed to provide a foundational environment for building 
 ### **Example: Base Dockerfile for C**
 
 ```dockerfile
-# Base image for C applications
 FROM gcc:13.2
 
-# Use Bash as the default shell
 SHELL ["/bin/bash", "-c"]
 
-# Set the working directory
 WORKDIR /app
 
-# Add metadata for traceability
 LABEL org.opencontainers.image.title="Whanos C Base Image" \
       org.opencontainers.image.description="A base image for building and deploying C applications using Makefile." \
       org.opencontainers.image.version="1.0"
 
-# Automatically copy the application files when the base image is used in derived images
 ONBUILD COPY . /app
 
-# Automatically build the application using make in derived images
 ONBUILD RUN set -eux; \
             make
 
-# Clean up source files and leave only the compiled binary
 ONBUILD RUN set -eux; \
             rm -rf *.c *.h Makefile
 
-# Default command for derived images
 ONBUILD CMD ["./compiled-app"]
 ```
 
 ### Explanation Base
 
+- **set -eux;**: Configures the shell to:
+  - `-e`: Exit immediately if a command exits with a non-zero status.
+  - `-u`: Treat unset variables as an error and exit immediately.
+  - `-x`: Print each command to the terminal before executing it.
 - **ONBUILD**: Specifies tasks (like copying files, building the app, and cleaning up unnecessary files) that execute when this base image is used in a derived Dockerfile.
 - **Metadata**: Labels are included for traceability and documentation.
 - **Build and Clean**: The derived image automatically copies files, builds the application using `make`, and cleans up unnecessary files (source code and Makefile).
