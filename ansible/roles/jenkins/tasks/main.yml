@@ -4,11 +4,27 @@
     dest: ~/
     mode: '0644'
 
+- name: Make build.sh executable
+  ansible.builtin.file:
+    path: ~/jenkins/build.sh
+    mode: '0755'
+
 - name: Upload images
   ansible.builtin.copy:
     src: ../../../../images
     dest: ~/
     mode: '0644'
+
+- name: Upload kubernetes file
+  ansible.builtin.copy:
+    src: ../../../../kubernetes
+    dest: ~/
+    mode: '0644'
+
+- name: Make build.sh executable
+  ansible.builtin.file:
+    path: ~/kubernetes/generate_kubernetes_cluster.py
+    mode: '0755'
 
 - name: Deploy jenkins
   community.docker.docker_compose_v2:

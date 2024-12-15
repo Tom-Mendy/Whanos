@@ -16,7 +16,9 @@ LABEL org.opencontainers.image.title="Whanos befunge Base Image" \
       org.opencontainers.image.description="A base image for building and deploying befunge applications using c transpilator." \
       org.opencontainers.image.version="1.0"
 
-ONBUILD COPY . /app
+ONBUILD COPY app/ /app
+
+ONBUILD COPY befunge/ /app
 
 ONBUILD RUN set -eux; \
             ./compile.sh main.bf executable

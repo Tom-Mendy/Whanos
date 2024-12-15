@@ -1,3 +1,8 @@
+- name: Install the Kubernetes Python package
+  ansible.builtin.pip:
+    name: kubernetes
+    state: present
+
 - name: Create ServiceAccount for Jenkins
   kubernetes.core.k8s:
     state: present
@@ -25,3 +30,27 @@
         - kind: ServiceAccount
           name: jenkins
           namespace: default
+
+- name: Create a Kubernetes Secret for the Jenkins service account
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: kubernetes.io/service-account-token
+      metadata:
+        name: jenkins
+        annotations:
+          kubernetes.io/service-account.name: jenkins
+
+# Access github docker registry
+- name: Create Kubernetes Secret for Docker config
+  kubernetes.core.k8s:
+    kind: Secret
+    api_version: v1
+    name: dockerconfigjson-github-com
+    namespace: default  # Replace with the appropriate namespace
+    definition:
+      type: kubernetes.io/dockerconfigjson
+      stringData:
+        .dockerconfigjson: '{"auths":{"ghcr.io":{"auth":"VG9tLU1lbmR5OmdocF9rWFU1aThYNFVTTFluTkU0Qm5Ha2paZWFhbE5ObVAxZXl3Uks="}}}'

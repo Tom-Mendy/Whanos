@@ -1,4 +1,4 @@
-FROM golang:1.23 AS dependencies
+FROM golang:1.23
 
 SHELL ["/bin/bash", "-c"]
 
@@ -8,26 +8,12 @@ LABEL org.opencontainers.image.title="Whanos go Base Image" \
       org.opencontainers.image.description="A base image for building and deploying go applications using golang1.23." \
       org.opencontainers.image.version="1.0"
 
-ONBUILD COPY . /app
+ONBUILD COPY app/ /app
 
-ONBUILD RUN cd /app && go mod download
+ONBUILD RUN set -eux; \
+            go mod download
 
+ONBUILD RUN set -eux; \
+            go build -o compiled-app
 
-FROM dependencies AS build
-
-SHELL ["/bin/bash", "-c"]
-
-WORKDIR /app
-
-ONBUILD RUN cd /app && go build -o compiled-app
-
-
-FROM golang:1.23 AS base
-
-SHELL ["/bin/bash", "-c"]
-
-WORKDIR /app
-
-ONBUILD COPY --from=build /app/compiled-app /app/compiled-app
-
-ONBUILD CMD ["/app/compiled-app"]
+ONBUILD CMD ["./compiled-app"]

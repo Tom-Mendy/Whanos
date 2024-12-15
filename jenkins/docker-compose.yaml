@@ -22,6 +22,9 @@ services:
       - GITHUB_DOCKER_REGISTRY_TOKEN=${GITHUB_DOCKER_REGISTRY_TOKEN:-github_token}
       # SSH_PRIVATE_KEY
       - SSH_PRIVATE_KEY=${SSH_PRIVATE_KEY:-private_key}
+      # kubernetes
+      - KUBE_SERVER=${KUBE_SERVER}
+      - KUBE_TOKEN=${KUBE_TOKEN}
     user: root
 
 volumes:
