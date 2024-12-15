@@ -80,7 +80,7 @@
 
 - name: Write the Kube_server IP in the .env file
   ansible.builtin.lineinfile:
-    path: "{{ lookup('env', 'PWD') }}../../.env"
+    path: "{{ lookup('env', 'PWD') }}/../../.env"
     line: "{{ kube_server_ip.stdout }}"
     create: yes
     mode: '0664'
