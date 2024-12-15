@@ -6,9 +6,10 @@ kubernetes/*.yml
 **/.env
 **/venv
 terraform/whanos-app.json
-terraform/linode_token.json
+linode_token.json
 terraform/*.tfstate**
 terraform/*.lock**
 terraform/*.**
 ansible/*.tfstate
 id_rsa_single_line.pub
+private_key
