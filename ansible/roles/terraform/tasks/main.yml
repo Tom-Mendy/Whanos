@@ -57,29 +57,8 @@
   changed_when: false
 
 - name: Generate dynamic inventory content
-  command: >
-    ./venv/bin/python -c "import json, jmespath;
-    terraform_output = json.loads(\"\"\"{
-      \"instance_ips\": {
-        \"sensitive\": false,
-        \"type\": [
-          \"tuple\",
-          [
-            [
-              \"set\",
-              \"string\"
-            ]
-          ]
-        ],
-        \"value\": [
-          [
-            \"139.162.188.52\"
-          ]
-        ]
-      }
-    }\"\"\");
-    instance_ips = terraform_output[\"instance_ips\"][\"value\"][0];
-    print(\"[jenkins]\\n{}\".format(instance_ips[0]))"
+  command:
+    cmd: "{{ lookup('env', 'PWD') }}/parse_ips.py '{{ parsed_terraform_output_result.stdout | to_json }}'"
   register: inventory_content
 
 - name: Debug inventory content

@@ -1,7 +1,7 @@
-# - hosts: localhost
-#   become: false
-#   roles:
-#     - terraform
+- hosts: localhost
+  become: false
+  roles:
+    - terraform
 
 - hosts: kube_control_plane
   roles:
