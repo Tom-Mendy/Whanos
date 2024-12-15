@@ -1,7 +1,7 @@
-- hosts: localhost
-  become: false
-  roles:
-    - terraform
+# - hosts: localhost
+#   become: false
+#   roles:
+#     - terraform
 
 - hosts: jenkins
   become: true
@@ -10,9 +10,5 @@
     - docker
     - jenkins
 
-- hosts: registry
-  become: true
-  roles:
-    - base
-    - docker
-    - registry
+- name: Install Kubernetes
+  ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
